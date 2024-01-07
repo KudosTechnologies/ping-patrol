@@ -2,7 +2,7 @@ version: '3.8'
 name: ping-patrol-local-setup
 services:
   ping-patrol-db:
-    image: mariadb:10.11
+    image: mariadb:11.2
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: myrootpass
