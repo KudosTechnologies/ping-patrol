@@ -1,0 +1,62 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.openapitools:openapi-generator-gradle-plugin:7.2.0"
+    }
+}
+
+apply plugin: "base"
+apply plugin: "org.openapi.generator"
+apply plugin: "maven-publish"
+
+group 'ro.kudostech'
+version '1.0.0-SNAPSHOT'
+
+def yamlFile = "$projectDir/spec/ping-patrol-rest-service-api.yaml".toString()
+def openApiMergerOutputDir = "$buildDir/merged/openapi/spec".toString()
+def openApiMergerOutputSpecName = "ping-patrol-rest-service-api.yaml".toString()
+def openApiMergerOutputFile = "$openApiMergerOutputDir/$openApiMergerOutputSpecName".toString()
+
+task openApiMergerCopy(type: Copy) {
+    from yamlFile
+    into openApiMergerOutputDir
+}
+
+openApiValidate {
+    inputSpec = yamlFile
+    recommend = true
+}
+
+task replaceApiVersion {
+    doLast {
+        ant.replace(
+                file: "$openApiMergerOutputFile",
+                token: 'versionNumber',
+                value: '1.0.0-SNAPSHOT'
+        )
+        println("$openApiMergerOutputFile")
+    }
+}
+
+tasks.openApiValidate.dependsOn tasks.replaceApiVersion
+tasks.replaceApiVersion.dependsOn tasks.openApiMergerCopy
+
+
+publishing {
+    publications {
+        api(MavenPublication) {
+            artifact("$openApiMergerOutputFile") {
+                extension 'yaml'
+            }
+        }
+    }
+    repositories {
+        mavenLocal()
+    }
+}
+tasks.withType(PublishToMavenLocal).configureEach {
+    dependsOn replaceApiVersion
+}

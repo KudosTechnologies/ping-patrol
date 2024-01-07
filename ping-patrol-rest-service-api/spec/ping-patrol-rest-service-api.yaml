@@ -1,0 +1,339 @@
+openapi: 3.0.3
+info:
+  version: versionNumber
+  title: PingPatrol Integration Platform API
+  description: An API for managing user authentications, integrations with external services/tools, and secure user reference token management for seamless SSO experiences.
+  contact:
+    name: API Support
+    email: contact@kudostech.com
+servers:
+  - url: https://api.connect.kudostech.ro/v1
+    description: Development server
+
+paths:
+  /user-profile/me:
+    get:
+      summary: Get profile of current logged in user
+      operationId: getCurrentUserProfile
+      tags:
+        - UserProfile
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+    put:
+        summary: Update profile of current logged
+        operationId: updateCurrentUserProfile
+        tags:
+            - UserProfile
+        requestBody:
+            description: User object that needs to be updated
+            content:
+              application/json:
+                  schema:
+                    $ref: '#/components/schemas/UpdateUserProfileRequest'
+            required: true
+        responses:
+            '200':
+              description: Successful operation
+
+  /user-profile/third-party/{userReferenceToken}:
+    parameters:
+      - $ref: '#/components/parameters/UserReferenceTokenPathParameter'
+    get:
+        summary: Get profile of a user using user reference token
+        operationId: getUserProfileByUserReferenceToken
+        tags:
+            - UserProfile
+        responses:
+            '200':
+              description: Successful operation
+              content:
+                  application/json:
+                    schema:
+                        $ref: '#/components/schemas/UserProfile'
+
+
+  /applications:
+    get:
+      summary: Get all applications
+      operationId: getAllApplications
+      tags:
+        - ApplicationCatalog
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Application'
+    post:
+        summary: Register a new application
+        operationId: registerApplication
+        tags:
+            - ApplicationCatalog
+        requestBody:
+            description: Application object that needs to be created
+            content:
+              application/json:
+                  schema:
+                    $ref: '#/components/schemas/RegisterApplicationRequest'
+            required: true
+        responses:
+            '201':
+              description: Successful operation
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/ResourceUUID'
+  /applications/{applicationId}:
+    parameters:
+      - $ref: '#/components/parameters/ApplicationIdPathParameter'
+    get:
+        summary: Get an application by id
+        operationId: getApplicationById
+        tags:
+            - ApplicationCatalog
+        responses:
+            '200':
+              description: Successful operation
+              content:
+                  application/json:
+                    schema:
+                        $ref: '#/components/schemas/Application'
+            '404':
+              description: Application not found
+    put:
+        summary: Update an application
+        operationId: updateApplication
+        tags:
+            - ApplicationCatalog
+        requestBody:
+            description: Application object that needs to be updated
+            content:
+              application/json:
+                  schema:
+                    $ref: '#/components/schemas/UpdateApplicationRequest'
+            required: true
+        responses:
+            '200':
+              description: Successful operation
+            '404':
+              description: Application not found
+
+    delete:
+        summary: Delete an application
+        operationId: deleteApplication
+        tags:
+            - ApplicationCatalog
+        responses:
+            '200':
+              description: Application deleted
+            '404':
+              description: Application not found
+
+  /applications/{applicationId}/redirect-url:
+    parameters:
+      - $ref: '#/components/parameters/ApplicationIdPathParameter'
+    get:
+      summary: Get redirection url for an application
+      operationId: getRedirectionUrl
+      tags:
+          - ApplicationCatalog
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationRedirectUrl'
+        '404':
+          description: Application not found
+
+
+
+components:
+  parameters:
+    UserReferenceTokenPathParameter:
+      name: userReferenceToken
+      in: path
+      required: true
+      example: YxSNtt-sqlzdaUhMZVQq4ob4SsGB2ci7
+      schema:
+        type: string
+    ApplicationIdPathParameter:
+      name: applicationId
+      in: path
+      required: true
+      example: 48a55ff9-9be7-42f9-b659-83a3d90666bf
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        avatar:
+          type: string
+          description: The id of avatar
+    UpdateUserProfileRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        avatar:
+          type: string
+          description: The id of avatar
+    Application:
+        type: object
+        properties:
+            id:
+              type: string
+              format: uuid
+            name:
+              type: string
+              minLength: 3
+              maxLength: 50
+            description:
+              type: string
+              minLength: 3
+              maxLength: 255
+            baseUrl:
+              type: string
+              minLength: 3
+              maxLength: 255
+            authClientId:
+              type: string
+              minLength: 3
+              maxLength: 50
+    RegisterApplicationRequest:
+        type: object
+        properties:
+            name:
+              type: string
+              minLength: 3
+              maxLength: 50
+            description:
+              type: string
+              minLength: 3
+              maxLength: 255
+            baseUrl:
+              type: string
+              minLength: 3
+              maxLength: 255
+            authClientId:
+              type: string
+              minLength: 3
+              maxLength: 50
+    UpdateApplicationRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 3
+          maxLength: 50
+        description:
+          type: string
+          minLength: 3
+          maxLength: 255
+        baseUrl:
+          type: string
+          minLength: 3
+          maxLength: 255
+        authClientId:
+          type: string
+          minLength: 3
+          maxLength: 50
+    ApplicationRedirectUrl:
+      type: object
+      description: The Redirect Url of the application
+      properties:
+        redirectUrl:
+          type: string
+          description: The Redirect Url of the application
+          example: https://example.app.com
+          format: uri
+
+    ResourceUUID:
+      type: object
+      description: The UUID of the resource
+      properties:
+        id:
+          type: string
+          description: The UUID of the resource
+          example: 1a7588a5-a684-4cd7-8f98-11e660af2289
+          format: uuid
+    RFC7807Problem:
+      description: Detailed information on the error
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: error time as UTC date-time
+        type:
+          type: string
+          format: uri
+          description: further information on the error
+          default: 'about:blank'
+        title:
+          type: string
+          description: error message
+          example: Bad Request
+        status:
+          type: integer
+          format: int32
+          description: HTTP status code based on the following error codes (https://tools.ietf.org/html/rfc2616#section-10)
+          example: 400
+          minimum: 100
+          maximum: 600
+          exclusiveMaximum: true
+        detail:
+          type: string
+          description: further description of the error pattern
+          example: JSON parse error
+        traceId:
+          type: string
+          description: Trace id of the request
+          example: avx1234asd
+        instance:
+          type: string
+          format: uri
+          description: calling path
+        violations:
+          type: array
+          description: list of fields with incorrect content
+          items:
+            $ref: '#/components/schemas/Violation'
+    Violation:
+      description: description of a faulty field value
+      properties:
+        field:
+          type: string
+          description: name of the field
+          example: Company.companyId
+        message:
+          type: string
+          description: error description
+          example: must be greater than or equal to 1
+  examples:
+    PatchArray:
+      value:
+        - op: "add"
+          path: "/firstName"
+          value: "John"
