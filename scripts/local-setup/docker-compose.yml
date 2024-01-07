@@ -1,0 +1,64 @@
+version: '3.8'
+name: ping-patrol-local-setup
+services:
+  ping-patrol-db:
+    image: mariadb:10.11
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: myrootpass
+      MYSQL_DATABASE: pingpatrol_db
+      MYSQL_USER: pingpatrol
+      MYSQL_PASSWORD: password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - 3306:3306
+
+  keycloak:
+    image: ping-patrol-keycloak:latest
+    command: ['start-dev']
+    environment:
+      - KC_DB=dev-file
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_FEATURES=scripts
+      - KC_HTTP_PORT=9080
+      - KEYCLOAK_SERVER_URL=${KEYCLOAK_SERVER_URL}
+      - KUDCONNECT_SERVER_URL=${PING_PATROL_REST_SERVICE_URL}
+    extra_hosts:
+      # ip of host.docker.internal
+      - "kudconnect.local:192.168.65.254"
+    ports:
+      - "9080:9080"
+
+  kudconnect-service:
+    image: kudconnect-service
+    extra_hosts:
+      - "kudconnect.local:192.168.65.254"
+    depends_on:
+      ping-patrol-db:
+        condition: service_started
+      keycloak:
+        condition: service_started
+    environment:
+      JAVA_OPTS: '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005'
+      POSTGRES_URL: jdbc:postgresql://db:5432/kudconnect
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      KEYCLOAK_BASE_URL: ${KEYCLOAK_SERVER_URL}
+    ports:
+      - "8080:8080"
+      - "5005:5005"
+
+  kudconnect-web-client:
+    image: kudconnect-web-client
+    depends_on:
+      keycloak:
+        condition: service_started
+      kudconnect-service:
+        condition: service_started
+    ports:
+      - "80:80"
+
+volumes:
+  mysql_data:

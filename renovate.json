@@ -1,0 +1,26 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base"
+  ],
+  "packageRules": [
+    {
+      "updateTypes": ["minor", "patch"],
+      "groupName": "all minor and patch updates",
+      "groupSlug": "minor-patch-updates"
+    },
+    {
+      "updateTypes": ["major"],
+      "groupName": "all major updates",
+      "groupSlug": "major-updates"
+    },
+    {
+      "packageNames": ["react-router-dom"],
+      "enabled": false
+    },
+    {
+      "packageNames": ["jest-dom"],
+      "enabled": false
+    }
+  ]
+}
