@@ -23,6 +23,10 @@
       "enabled": false
     },
     {
+      "packageNames": ["ro.kudostech:ping-patrol-rest-service-api"],
+      "enabled": false
+    },
+    {
       "datasources": ["docker"],
       "packageNames": ["mariadb"],
       "allowedVersions": "<11.0.0"
