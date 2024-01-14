@@ -24,7 +24,7 @@ import org.springframework.util.CollectionUtils;
 
 @Slf4j
 @RequiredArgsConstructor
-//@Component
+@Component
 @Profile("!acceptancetest")
 public class KeycloakInitializerRunner implements CommandLineRunner {
 
@@ -33,6 +33,7 @@ public class KeycloakInitializerRunner implements CommandLineRunner {
 
   private static final String REALM_NAME = "pingpatrol";
   private static final String CLIENT_ID = "pingpatrol-webapp";
+  private static final String LOGIN_THEME = "ping-portal";
 
   private static final List<String> REDIRECT_URL_LIST =
       List.of(
@@ -73,6 +74,9 @@ public class KeycloakInitializerRunner implements CommandLineRunner {
     realmRepresentation.setRegistrationAllowed(true);
     realmRepresentation.setLoginWithEmailAllowed(true);
     realmRepresentation.setRegistrationEmailAsUsername(true);
+
+    // Set Login Theme
+    realmRepresentation.setLoginTheme(LOGIN_THEME);
 
     // Additional IdPs
     configureGoogleIdentityProvider(realmRepresentation);

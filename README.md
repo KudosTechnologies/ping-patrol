@@ -2,12 +2,6 @@
 
 ## Description
 
-## Getting Started
-
-To get started, simply clone this repository and follow the setup instructions. This template is a living document and will continue to be updated with additional features and improvements. We look forward to your contributions and feedback!
-
-Remember, the purpose of this project is to serve as a guideline and starting point. Feel free to modify it according to the needs of your own project and team. Happy coding!
-
 ## Local Setup
 
 ### Build Project
