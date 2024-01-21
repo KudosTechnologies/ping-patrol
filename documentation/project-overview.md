@@ -4,12 +4,6 @@
 
 PingPatrol is a web-based uptime monitoring service, designed to offer basic functionalities similar to UptimeRobot. It aims to provide users with the capability to monitor the availability of their websites and receive notifications in case of downtime. The project's goal is to deepen knowledge in Java Spring Boot, ReactJS, and cloud technologies, while creating a functional and user-friendly service.
 
-## Project Objectives:
-
-- Develop a simplified uptime monitoring tool.
-- Learn and apply advanced techniques in Java Spring Boot and ReactJS.
-- Explore integration with cloud services (AWS, Azure) and identity management using Keycloak.
-- Implement the project incrementally, ensuring thorough testing and quality assurance.
 
 ## Functionalities:
 
