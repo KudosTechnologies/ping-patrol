@@ -17,16 +17,8 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import { useNavigate } from "react-router-dom";
 
-const StyledToolbar = styled(Toolbar)(({ theme }) => ({
-  display: "flex",
+const StyledToolbar = styled(Toolbar)(() => ({
   justifyContent: "space-between",
-  alignItems: "center",
-  gap: theme.spacing(1),
-}));
-
-const StyledLogoContainer = styled("div")(() => ({
-  display: "flex",
-  alignItems: "center",
 }));
 
 const TopMenuBar: React.FC = () => {
@@ -45,78 +37,85 @@ const TopMenuBar: React.FC = () => {
     // Add other menu items here as needed
   ];
 
-  const drawer = (
-    <Drawer anchor="left" open={drawerOpen} onClose={handleDrawerToggle}>
-      <List>
+  const renderMobileMenu = () => (
+    <>
+      <IconButton
+        edge="start"
+        color="inherit"
+        aria-label="open drawer"
+        onClick={handleDrawerToggle}
+      >
+        <MenuIcon />
+      </IconButton>
+      <Drawer anchor="left" open={drawerOpen} onClose={handleDrawerToggle}>
+        <List>
+          {menuItems.map((item) => (
+            <ListItem
+              button
+              key={item.text}
+              onClick={() => {
+                handleDrawerToggle();
+                navigate(item.path);
+              }}
+            >
+              <ListItemText primary={item.text} />
+            </ListItem>
+          ))}
+        </List>
+      </Drawer>
+      <Button color="inherit" onClick={() => navigate("/login")}>
+        Login
+      </Button>
+    </>
+  );
+
+  const renderDesktopMenu = () => (
+    <>
+      <Box sx={{ flexGrow: 0.5 }}>
         {menuItems.map((item) => (
-          <ListItem
-            button
+          <Button
             key={item.text}
-            onClick={() => {
-              handleDrawerToggle();
-              navigate(item.path);
-            }}
+            color="inherit"
+            onClick={() => navigate(item.path)}
           >
-            <ListItemText primary={item.text} />
-          </ListItem>
+            {item.text}
+          </Button>
         ))}
-      </List>
-    </Drawer>
+      </Box>
+      <Box sx={{ marginRight: "10%" }}>
+        <Button color="inherit" onClick={() => navigate("/login")}>
+          Login
+        </Button>
+      </Box>
+    </>
   );
 
   return (
-    <AppBar position="sticky" color="primary">
+    <AppBar position="sticky" style={{ backgroundColor: '#131A25' }}>
       <StyledToolbar>
-        {isMobile && (
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerToggle}
-          >
-            <MenuIcon />
-          </IconButton>
-        )}
-        <StyledLogoContainer onClick={() => navigate("/")}>
-          <IconButton edge="start" color="inherit" aria-label="logo">
-            <img
-              src="src/assets/ping-patrol-logo-color.png"
-              alt="Logo"
-              style={{ height: "60px" }}
-            />
-          </IconButton>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ display: { xs: "none", md: "block" } }}
-          >
-            Ping Patrol
-          </Typography>
-        </StyledLogoContainer>
-        {isMobile ? (
-          <Button color="inherit" onClick={() => navigate("/login")}>
-            Login
-          </Button>
-        ) : (
-          <>
-            {!isMobile && <Box sx={{ flexGrow: 0.1 }} />}
-
-            {menuItems.map((item) => (
-              <Button
-                key={item.text}
-                color="inherit"
-                onClick={() => navigate(item.path)}
-              >
-                {item.text}
-              </Button>
-            ))}
-            <Box sx={{ flexGrow: 1 }} />
-            <Button color="inherit" onClick={() => navigate("/login")}>
-              Login
-            </Button>
-          </>
-        )}
-        {isMobile && drawer}
+        <div style={{ justifyContent: "space-between" }}>
+          <Box display="flex" alignItems="center" sx={{ marginLeft: "80%" }}>
+            <IconButton edge="start" color="inherit" aria-label="logo" onClick={() => navigate("/monitoring")}>
+              <img
+                src="src/assets/ping-patrol-logo-color.png"
+                alt="Logo"
+                style={{ height: "100px", objectFit: "contain" }}
+              />
+            </IconButton>
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{
+                display: { xs: "none", md: "block" },
+                whiteSpace: "nowrap",
+                fontWeight: "bold",
+              }}
+            >
+              Ping Patrol
+            </Typography>
+          </Box>
+        </div>
+        {isMobile ? renderMobileMenu() : renderDesktopMenu()}
       </StyledToolbar>
     </AppBar>
   );
