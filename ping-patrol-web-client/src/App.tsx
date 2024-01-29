@@ -1,9 +1,9 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import HomeWrapperPage from "./pages/HomeWrapperPage";
-import MonitoringPage from "./pages/MonitoringPage";
-import IntegrationPage from "./pages/IntegrationPage";
-import DashboardPage from "./pages/Dashboard";
+import HomeWrapperPage from "./components/HomeWrapper";
+import MonitoringPage from "./components/Monitoring";
+import IntegrationPage from "./components/Integration";
+import DashboardPage from "./components/Dashboard";
 
 const App: React.FC = () => (
   <Router>

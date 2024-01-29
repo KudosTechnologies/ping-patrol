@@ -70,7 +70,7 @@ const Drawer = styled(MuiDrawer, {
 
 const defaultTheme = createTheme();
 
-export default function Dashboard() {
+export default function DashboardPage() {
   const [open, setOpen] = useState(true);
   const [selectedMenuItem, setSelectedMenuItem] = useState("Dashboard");
   const navigate = useNavigate();
