@@ -47,7 +47,6 @@ const TopMenuBar: React.FC = () => {
   const menuItems = [
     { text: "Monitoring", path: "/monitoring" },
     { text: "Integration", path: "/integration" },
-    // Add other menu items here as needed
   ];
 
   const renderMobileMenu = () => (

@@ -16,7 +16,7 @@ import CrisisAlertIcon from "@mui/icons-material/CrisisAlert";
 import MonitorHeartIcon from "@mui/icons-material/MonitorHeart";
 import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Outlet, To, useNavigate } from "react-router-dom";
 
 const drawerWidth: number = 240;
 
@@ -75,7 +75,7 @@ export default function DashboardPage() {
   const [selectedMenuItem, setSelectedMenuItem] = useState("Dashboard");
   const navigate = useNavigate();
 
-  const handleMenuItemClick = (itemName, path) => {
+  const handleMenuItemClick = (itemName: React.SetStateAction<string>, path: To) => {
     setSelectedMenuItem(itemName);
     navigate(path);
   };
@@ -95,7 +95,7 @@ export default function DashboardPage() {
         <ListItemText primary="Dashboard" />
       </ListItemButton>
       <ListItemButton
-        onClick={() => handleMenuItemClick("Monitor", "/monitor")}
+        onClick={() => handleMenuItemClick("Monitor", "/dashboard/monitors")}
       >
         <ListItemIcon>
           <MonitorHeartIcon />
@@ -176,6 +176,7 @@ export default function DashboardPage() {
           }}
         >
           <Toolbar />
+          <Outlet /> {/* Render the child routes */}
         </Box>
       </Box>
     </ThemeProvider>

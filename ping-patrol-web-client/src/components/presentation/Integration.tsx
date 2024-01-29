@@ -1,11 +1,9 @@
 import {
   Box,
   Typography,
-  Button,
   useMediaQuery,
   useTheme,
   Grid,
-  Paper,
   Card,
   CardMedia,
   CardContent,
