@@ -16,12 +16,25 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useNavigate } from "react-router-dom";
+import { useKeycloak } from "@react-keycloak/web";
 
 const StyledToolbar = styled(Toolbar)(() => ({
   justifyContent: "space-between",
 }));
 
 const TopMenuBar: React.FC = () => {
+  const { keycloak, initialized } = useKeycloak();
+
+  const handleLogin = () => {
+    if (!keycloak.authenticated) {
+      keycloak.login();
+    }
+  };
+
+  if (!initialized) {
+    return <div>Loading...</div>;
+  }
+
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const theme = useTheme();
@@ -63,9 +76,15 @@ const TopMenuBar: React.FC = () => {
           ))}
         </List>
       </Drawer>
-      <Button color="inherit" onClick={() => navigate("/login")}>
-        Login
-      </Button>
+      {keycloak.authenticated ? (
+        <Button color="inherit" onClick={() => navigate("/dashboard")}>
+          Dashboard
+        </Button>
+      ) : (
+        <Button color="inherit" onClick={() => handleLogin()}>
+          Login
+        </Button>
+      )}
     </>
   );
 
@@ -83,19 +102,30 @@ const TopMenuBar: React.FC = () => {
         ))}
       </Box>
       <Box sx={{ marginRight: "10%" }}>
-        <Button color="inherit" onClick={() => navigate("/login")}>
-          Login
-        </Button>
+        {keycloak.authenticated ? (
+          <Button color="inherit" onClick={() => navigate("/dashboard")}>
+            Dashboard
+          </Button>
+        ) : (
+          <Button color="inherit" onClick={() => handleLogin()}>
+            Login
+          </Button>
+        )}
       </Box>
     </>
   );
 
   return (
-    <AppBar position="sticky" style={{ backgroundColor: '#131A25' }}>
+    <AppBar position="sticky" style={{ backgroundColor: "#131A25" }}>
       <StyledToolbar>
         <div style={{ justifyContent: "space-between" }}>
           <Box display="flex" alignItems="center" sx={{ marginLeft: "80%" }}>
-            <IconButton edge="start" color="inherit" aria-label="logo" onClick={() => navigate("/monitoring")}>
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="logo"
+              onClick={() => navigate("/monitoring")}
+            >
               <img
                 src="src/assets/ping-patrol-logo-color.png"
                 alt="Logo"
