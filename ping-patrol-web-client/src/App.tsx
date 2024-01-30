@@ -7,6 +7,7 @@ import DashboardPage from "./components/dashboard/DashboardMenu";
 import Monitors from "./components/dashboard/Monitors";
 import Dashboard from "./components/dashboard/Dashboard";
 import Incidents from "./components/dashboard/Incidents";
+import PrivateRoute from "./utils/PrivateRoute";
 
 const App: React.FC = () => (
   <Router>
@@ -17,7 +18,15 @@ const App: React.FC = () => (
         <Route path="/integration" element={<IntegrationPage />} />
       </Route>
       <Route path="/dashboard" element={<DashboardPage />}>
-        <Route index element={<Dashboard />} />
+        <Route
+          index
+          element={
+            <PrivateRoute>
+              {" "}
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
         <Route path="monitors" element={<Monitors />} />
         <Route path="incidents" element={<Incidents />} />
       </Route>
