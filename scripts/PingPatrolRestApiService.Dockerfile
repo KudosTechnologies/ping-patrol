@@ -9,7 +9,7 @@ RUN ./gradlew publishToMavenLocal
 WORKDIR ../kudconnect-service
 RUN ./gradlew clean build
 
-FROM eclipse-temurin:21.0.1_12-jre-alpine
+FROM eclipse-temurin:21.0.2_13-jre-alpine
 
 COPY --from=maven_builder kudconnect-service/build/libs/*.jar kudconnect-service.jar
 ADD https://repo1.maven.org/maven2/co/elastic/apm/elastic-apm-agent/1.43.0/elastic-apm-agent-1.43.0.jar elastic-apm-agent.jar
