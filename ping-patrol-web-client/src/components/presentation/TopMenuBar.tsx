@@ -24,6 +24,10 @@ const StyledToolbar = styled(Toolbar)(() => ({
 
 const TopMenuBar: React.FC = () => {
   const { keycloak, initialized } = useKeycloak();
+  const navigate = useNavigate();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const handleLogin = () => {
     if (!keycloak.authenticated) {
@@ -34,11 +38,6 @@ const TopMenuBar: React.FC = () => {
   if (!initialized) {
     return <div>Loading...</div>;
   }
-
-  const navigate = useNavigate();
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const handleDrawerToggle = () => {
     setDrawerOpen(!drawerOpen);
