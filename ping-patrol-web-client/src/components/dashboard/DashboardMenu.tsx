@@ -103,7 +103,7 @@ export default function DashboardPage() {
         <ListItemText primary="Monitor" />
       </ListItemButton>
       <ListItemButton
-        onClick={() => handleMenuItemClick("Incidents", "/incidents")}
+        onClick={() => handleMenuItemClick("Incidents", "/dashboard/incidents")}
       >
         <ListItemIcon>
           <CrisisAlertIcon />

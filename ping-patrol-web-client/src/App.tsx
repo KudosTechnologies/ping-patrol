@@ -5,6 +5,8 @@ import MonitoringPage from "./components/presentation/Monitoring";
 import IntegrationPage from "./components/presentation/Integration";
 import DashboardPage from "./components/dashboard/DashboardMenu";
 import Monitors from "./components/dashboard/Monitors";
+import Dashboard from "./components/dashboard/Dashboard";
+import Incidents from "./components/dashboard/Incidents";
 
 const App: React.FC = () => (
   <Router>
@@ -15,8 +17,9 @@ const App: React.FC = () => (
         <Route path="/integration" element={<IntegrationPage />} />
       </Route>
       <Route path="/dashboard" element={<DashboardPage />}>
-        {/* <Route index element={<DashboardPage />} /> */}
+        <Route index element={<Dashboard />} />
         <Route path="monitors" element={<Monitors />} />
+        <Route path="incidents" element={<Incidents />} />
       </Route>
       <Route path="*" element={<div>404</div>} />
     </Routes>
