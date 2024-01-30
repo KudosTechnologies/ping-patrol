@@ -27,8 +27,22 @@ const App: React.FC = () => (
             </PrivateRoute>
           }
         />
-        <Route path="monitors" element={<Monitors />} />
-        <Route path="incidents" element={<Incidents />} />
+        <Route
+          path="monitors"
+          element={
+            <PrivateRoute>
+              <Monitors />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="incidents"
+          element={
+            <PrivateRoute>
+              <Incidents />
+            </PrivateRoute>
+          }
+        />
       </Route>
       <Route path="*" element={<div>404</div>} />
     </Routes>
