@@ -11,163 +11,270 @@ servers:
     description: Development server
 
 paths:
-  /user-profile/me:
+  /monitors:
     get:
-      summary: Get profile of current logged in user
-      operationId: getCurrentUserProfile
+      summary: Get all monitors
+      operationId: getAllMonitors
       tags:
-        - UserProfile
+        - monitors
       responses:
         '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserProfile'
-    put:
-        summary: Update profile of current logged
-        operationId: updateCurrentUserProfile
-        tags:
-            - UserProfile
-        requestBody:
-            description: User object that needs to be updated
-            content:
-              application/json:
-                  schema:
-                    $ref: '#/components/schemas/UpdateUserProfileRequest'
-            required: true
-        responses:
-            '200':
-              description: Successful operation
-
-  /user-profile/third-party/{userReferenceToken}:
-    parameters:
-      - $ref: '#/components/parameters/UserReferenceTokenPathParameter'
-    get:
-        summary: Get profile of a user using user reference token
-        operationId: getUserProfileByUserReferenceToken
-        tags:
-            - UserProfile
-        responses:
-            '200':
-              description: Successful operation
-              content:
-                  application/json:
-                    schema:
-                        $ref: '#/components/schemas/UserProfile'
-
-
-  /applications:
-    get:
-      summary: Get all applications
-      operationId: getAllApplications
-      tags:
-        - ApplicationCatalog
-      responses:
-        '200':
-          description: Successful operation
+          description: Monitors found
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Application'
-    post:
-        summary: Register a new application
-        operationId: registerApplication
-        tags:
-            - ApplicationCatalog
-        requestBody:
-            description: Application object that needs to be created
-            content:
-              application/json:
-                  schema:
-                    $ref: '#/components/schemas/RegisterApplicationRequest'
-            required: true
-        responses:
-            '201':
-              description: Successful operation
-              content:
-                application/json:
-                  schema:
-                    $ref: '#/components/schemas/ResourceUUID'
-  /applications/{applicationId}:
-    parameters:
-      - $ref: '#/components/parameters/ApplicationIdPathParameter'
-    get:
-        summary: Get an application by id
-        operationId: getApplicationById
-        tags:
-            - ApplicationCatalog
-        responses:
-            '200':
-              description: Successful operation
-              content:
-                  application/json:
-                    schema:
-                        $ref: '#/components/schemas/Application'
-            '404':
-              description: Application not found
-    put:
-        summary: Update an application
-        operationId: updateApplication
-        tags:
-            - ApplicationCatalog
-        requestBody:
-            description: Application object that needs to be updated
-            content:
-              application/json:
-                  schema:
-                    $ref: '#/components/schemas/UpdateApplicationRequest'
-            required: true
-        responses:
-            '200':
-              description: Successful operation
-            '404':
-              description: Application not found
-
-    delete:
-        summary: Delete an application
-        operationId: deleteApplication
-        tags:
-            - ApplicationCatalog
-        responses:
-            '200':
-              description: Application deleted
-            '404':
-              description: Application not found
-
-  /applications/{applicationId}/redirect-url:
-    parameters:
-      - $ref: '#/components/parameters/ApplicationIdPathParameter'
-    get:
-      summary: Get redirection url for an application
-      operationId: getRedirectionUrl
-      tags:
-          - ApplicationCatalog
-      responses:
-        '200':
-          description: Successful operation
+                  $ref: '#/components/schemas/Monitor'
+        '500':
+          description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApplicationRedirectUrl'
+                $ref: '#/components/schemas/RFC7807Problem'
+    post:
+      summary: Create a new monitor
+      operationId: createMonitor
+      tags:
+        - monitors
+      requestBody:
+        description: Monitor object that needs to be added
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMonitorRequest'
+      responses:
+        '201':
+          description: Monitor created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Monitor'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RFC7807Problem'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RFC7807Problem'
+    put:
+      summary: Update a monitor
+      operationId: updateMonitor
+      tags:
+        - monitors
+      requestBody:
+        description: Monitor object that needs to be added
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMonitorRequest'
+      responses:
+        '200':
+          description: Monitor updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Monitor'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RFC7807Problem'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RFC7807Problem'
+  /monitors/{monitorId}:
+    parameters:
+      - $ref: '#/components/parameters/MonitorIdPathParameter'
+    get:
+      summary: Get a monitor by id
+      operationId: getMonitorById
+      tags:
+        - monitors
+      responses:
+        '200':
+          description: Monitor found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Monitor'
         '404':
-          description: Application not found
+          description: Monitor not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RFC7807Problem'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RFC7807Problem'
+    delete:
+      summary: Delete a monitor by id
+      operationId: deleteMonitorById
+      tags:
+        - monitors
+      responses:
+        '204':
+          description: Monitor deleted
+        '404':
+          description: Monitor not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RFC7807Problem'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RFC7807Problem'
+  /monitors/{monitorId}/pause:
+    parameters:
+      - $ref: '#/components/parameters/MonitorIdPathParameter'
+    put:
+      summary: Pause a monitor by id
+      operationId: pauseMonitorById
+      tags:
+        - monitors
+      responses:
+        '200':
+          description: Monitor paused
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Monitor'
+        '404':
+          description: Monitor not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RFC7807Problem'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RFC7807Problem'
+  /monitors/{monitorId}/resume:
+    parameters:
+      - $ref: '#/components/parameters/MonitorIdPathParameter'
+    put:
+      summary: Resume a monitor by id
+      operationId: resumeMonitorById
+      tags:
+        - monitors
+      responses:
+        '200':
+          description: Monitor resumed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Monitor'
+        '404':
+          description: Monitor not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RFC7807Problem'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RFC7807Problem'
+  /monitors/{monitorId}/reset:
+    parameters:
+      - $ref: '#/components/parameters/MonitorIdPathParameter'
+    put:
+      summary: Reset a monitor by id
+      operationId: resetMonitorById
+      tags:
+        - monitors
+      responses:
+        '200':
+          description: Monitor reset
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Monitor'
+        '404':
+          description: Monitor not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RFC7807Problem'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RFC7807Problem'
+  /monitors/{monitorId}/events:
+    parameters:
+      - $ref: '#/components/parameters/MonitorIdPathParameter'
+    get:
+      summary: Get all monitor events
+      operationId: getAllMonitorEvents
+      tags:
+        - monitors
+      responses:
+        '200':
+          description: Monitor events found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MonitorEvent'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RFC7807Problem'
+  /monitors/{monitorId}/probes:
+    parameters:
+      - $ref: '#/components/parameters/MonitorIdPathParameter'
+    get:
+      summary: Get all monitor probes
+      operationId: getAllMonitorProbes
+      tags:
+        - monitors
+      responses:
+        '200':
+          description: Monitor probes found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MonitorProbes'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RFC7807Problem'
 
 
 
 components:
   parameters:
-    UserReferenceTokenPathParameter:
-      name: userReferenceToken
-      in: path
-      required: true
-      example: YxSNtt-sqlzdaUhMZVQq4ob4SsGB2ci7
-      schema:
-        type: string
-    ApplicationIdPathParameter:
-      name: applicationId
+    MonitorIdPathParameter:
+      name: monitorId
       in: path
       required: true
       example: 48a55ff9-9be7-42f9-b659-83a3d90666bf
@@ -175,100 +282,142 @@ components:
         type: string
         format: uuid
   schemas:
-    UserProfile:
+    Monitor:
       type: object
+      description: Monitor object
       properties:
         id:
           type: string
+          description: The UUID of the monitor
+          example: 1a7588a5-a684-4cd7-8f98-11e660af2289
           format: uuid
-        firstName:
+        name:
           type: string
-        lastName:
+          description: The name of the monitor
+          example: Monitor 1
+        monitorType:
+          $ref: '#/components/schemas/MonitorType'
+        url:
           type: string
-        email:
-          type: string
-        avatar:
-          type: string
-          description: The id of avatar
-    UpdateUserProfileRequest:
+          description: The url of the monitor
+          example: https://www.google.com
+        monitoringInterval:
+          type: integer
+          description: The monitoring interval of the monitor
+          example: 60
+          minimum: 1
+          maximum: 3600
+        monitorTimeout:
+          type: integer
+          description: The monitor timeout of the monitor
+          example: 60
+          minimum: 1
+          maximum: 3600
+    CreateMonitorRequest:
       type: object
-      properties:
-        firstName:
-          type: string
-        lastName:
-          type: string
-        avatar:
-          type: string
-          description: The id of avatar
-    Application:
-        type: object
-        properties:
-            id:
-              type: string
-              format: uuid
-            name:
-              type: string
-              minLength: 3
-              maxLength: 50
-            description:
-              type: string
-              minLength: 3
-              maxLength: 255
-            baseUrl:
-              type: string
-              minLength: 3
-              maxLength: 255
-            authClientId:
-              type: string
-              minLength: 3
-              maxLength: 50
-    RegisterApplicationRequest:
-        type: object
-        properties:
-            name:
-              type: string
-              minLength: 3
-              maxLength: 50
-            description:
-              type: string
-              minLength: 3
-              maxLength: 255
-            baseUrl:
-              type: string
-              minLength: 3
-              maxLength: 255
-            authClientId:
-              type: string
-              minLength: 3
-              maxLength: 50
-    UpdateApplicationRequest:
-      type: object
+      description: Monitor object that needs to be added
       properties:
         name:
           type: string
-          minLength: 3
-          maxLength: 50
-        description:
+          description: The name of the monitor
+          example: Monitor 1
+        monitorType:
+          $ref: '#/components/schemas/MonitorType'
+        url:
           type: string
-          minLength: 3
-          maxLength: 255
-        baseUrl:
-          type: string
-          minLength: 3
-          maxLength: 255
-        authClientId:
-          type: string
-          minLength: 3
-          maxLength: 50
-    ApplicationRedirectUrl:
+          description: The url of the monitor
+          example: https://www.google.com
+        monitoringInterval:
+          type: integer
+          description: The monitoring interval of the monitor
+          example: 60
+          minimum: 1
+          maximum: 3600
+        monitorTimeout:
+          type: integer
+          description: The monitor timeout of the monitor
+          example: 60
+          minimum: 1
+          maximum: 3600
+    UpdateMonitorRequest:
       type: object
-      description: The Redirect Url of the application
+      description: Monitor object that needs to be added
       properties:
-        redirectUrl:
+        name:
           type: string
-          description: The Redirect Url of the application
-          example: https://example.app.com
-          format: uri
+          description: The name of the monitor
+          example: Monitor 1
+        monitorType:
+          $ref: '#/components/schemas/MonitorType'
+        url:
+          type: string
+          description: The url of the monitor
+          example: https://www.google.com
+        monitoringInterval:
+          type: integer
+          description: The monitoring interval of the monitor
+          example: 60
+          minimum: 1
+          maximum: 3600
+        monitorTimeout:
+          type: integer
+          description: The monitor timeout of the monitor
+          example: 60
+          minimum: 1
+          maximum: 3600
+
+    MonitorType:
+      type: string
+      enum:
+        - PING
+        - HTTPS
+
+    MonitorEvent:
+      type: object
+      description: Monitor event object
+      properties:
+        id:
+          type: integer
+          description: The id of the monitor event
+        timestamp:
+          type: string
+          format: date-time
+          description: The timestamp of the monitor event
+        status:
+          $ref: '#/components/schemas/MonitorEventStatus'
+        duration:
+          type: integer
+          description: The duration of the event
+    MonitorEventStatus:
+      type: string
+      enum:
+        - UP
+        - DOWN
+        - PAUSED
+        - RESUMED
+        - RESET
+    MonitorProbes:
+      type: object
+      description: Monitor probes
+      properties:
+        id:
+          type: integer
+          description: The id of the monitor probe
+        timestamp:
+          type: string
+          format: date-time
+          description: The timestamp of the monitor probe
+        result:
+          $ref: '#/components/schemas/MonitorProbeResult'
+        duration:
+          type: integer
+          description: The duration of the probe
+
+    MonitorProbeResult:
+      type: string
+      enum:
+        - SUCCESS
+        - FAILURE
 
     ResourceUUID:
       type: object

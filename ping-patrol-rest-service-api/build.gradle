@@ -13,7 +13,7 @@ apply plugin: "org.openapi.generator"
 apply plugin: "maven-publish"
 
 group 'ro.kudostech'
-version '1.0.0-SNAPSHOT'
+version '0.1.0'
 
 def yamlFile = "$projectDir/spec/ping-patrol-rest-service-api.yaml".toString()
 def openApiMergerOutputDir = "$buildDir/merged/openapi/spec".toString()
@@ -35,7 +35,7 @@ task replaceApiVersion {
         ant.replace(
                 file: "$openApiMergerOutputFile",
                 token: 'versionNumber',
-                value: '1.0.0-SNAPSHOT'
+                value: '0.1.0'
         )
         println("$openApiMergerOutputFile")
     }

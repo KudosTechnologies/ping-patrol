@@ -1,4 +1,4 @@
-package ro.kudostech.pingpatrol.keycloakconfigurator;
+package ro.kudostech.pingpatrol.modules.keycloakconfigurator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +24,7 @@ import org.springframework.util.CollectionUtils;
 
 @Slf4j
 @RequiredArgsConstructor
-@Component
+//@Component
 @Profile("!acceptancetest")
 public class KeycloakInitializerRunner implements CommandLineRunner {
 
