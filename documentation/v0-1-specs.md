@@ -58,7 +58,7 @@ Successful monitor creation.
 
 ```json
 {
-  "id": 1,
+  "id": "1a7588a5-a684-4cd7-8f98-11e660af2289",
   "name": "My Monitor",
   "monitorType": "HTTP(s)",
   "url": "https://example.com",
@@ -92,7 +92,7 @@ Invalid request body.
 
 ---------------------
 
-### [Edit Monitor]
+### [Update Monitor]
 
 - **URL:** `/monitors/{id}`
 - **Method:** `PUT`

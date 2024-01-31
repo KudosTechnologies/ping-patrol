@@ -1,4 +1,4 @@
-package ro.kudostech.pingpatrol.keycloakconfigurator;
+package ro.kudostech.pingpatrol.modules.keycloakconfigurator;
 
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
