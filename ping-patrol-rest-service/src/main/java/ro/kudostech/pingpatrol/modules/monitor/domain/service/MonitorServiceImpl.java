@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ro.kudostech.pingpatrol.api.server.model.CreateMonitorRequest;
 import ro.kudostech.pingpatrol.api.server.model.Monitor;
+import ro.kudostech.pingpatrol.api.server.model.UpdateMonitorRequest;
 import ro.kudostech.pingpatrol.modules.monitor.adapter.out.persistence.MonitorDbo;
 import ro.kudostech.pingpatrol.modules.monitor.adapter.out.persistence.MonitorRepository;
 import ro.kudostech.pingpatrol.modules.monitor.domain.mapper.MonitorMapper;
@@ -58,6 +59,20 @@ public class MonitorServiceImpl implements MonitorService {
   @Transactional
   public void deleteMonitorById(String monitorId) {
     monitorRepository.deleteById(monitorId);
+  }
+
+  @Override
+  public Monitor updateMonitor(String monitorId, UpdateMonitorRequest updateMonitorRequest) {
+    var monitorDbo =
+        monitorRepository
+            .findById(monitorId)
+            .orElseThrow(() -> new NotFoundException("Monitor not found"));
+    monitorDbo.setName(updateMonitorRequest.getName());
+    monitorDbo.setUrl(updateMonitorRequest.getUrl());
+    monitorDbo.setMonitoringInterval(updateMonitorRequest.getMonitoringInterval());
+    monitorDbo.setMonitorTimeout(updateMonitorRequest.getMonitorTimeout());
+    monitorRepository.save(monitorDbo);
+    return monitorMapper.toMonitor(monitorDbo);
   }
 
   private String getAuthenticatedUserId() {

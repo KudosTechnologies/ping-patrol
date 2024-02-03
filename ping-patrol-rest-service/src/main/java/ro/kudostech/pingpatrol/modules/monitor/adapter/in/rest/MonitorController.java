@@ -71,7 +71,7 @@ public class MonitorController implements MonitorsApi {
   }
 
   @Override
-  public ResponseEntity<Monitor> updateMonitor(UpdateMonitorRequest updateMonitorRequest) {
-    return null;
+  public ResponseEntity<Monitor> updateMonitor(UUID monitorId, UpdateMonitorRequest updateMonitorRequest) {
+    return ResponseEntity.ok(monitorService.updateMonitor(monitorId.toString(), updateMonitorRequest));
   }
 }
