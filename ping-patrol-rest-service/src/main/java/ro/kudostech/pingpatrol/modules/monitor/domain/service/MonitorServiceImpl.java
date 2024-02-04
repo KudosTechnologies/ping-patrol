@@ -7,12 +7,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ro.kudostech.pingpatrol.api.server.model.CreateMonitorRequest;
 import ro.kudostech.pingpatrol.api.server.model.Monitor;
+import ro.kudostech.pingpatrol.api.server.model.MonitorRun;
 import ro.kudostech.pingpatrol.api.server.model.MonitorStatus;
-import ro.kudostech.pingpatrol.api.server.model.MonitorType;
 import ro.kudostech.pingpatrol.api.server.model.UpdateMonitorRequest;
 import ro.kudostech.pingpatrol.modules.monitor.adapter.out.persistence.MonitorDbo;
 import ro.kudostech.pingpatrol.modules.monitor.adapter.out.persistence.MonitorRepository;
+import ro.kudostech.pingpatrol.modules.monitor.adapter.out.persistence.MonitorRunRepository;
 import ro.kudostech.pingpatrol.modules.monitor.domain.mapper.MonitorMapper;
+import ro.kudostech.pingpatrol.modules.monitor.domain.mapper.MonitorRunMapper;
 import ro.kudostech.pingpatrol.modules.monitor.ports.MonitorService;
 
 import java.util.List;
@@ -22,7 +24,9 @@ import java.util.List;
 public class MonitorServiceImpl implements MonitorService {
 
   private final MonitorMapper monitorMapper;
+  private final MonitorRunMapper monitorRunMapper;
   private final MonitorRepository monitorRepository;
+  private final MonitorRunRepository monitorRunRepository;
   private final MonitorRunnerScheduler monitorRunnerScheduler;
 
   @Override
@@ -101,6 +105,11 @@ public class MonitorServiceImpl implements MonitorService {
   @Override
   public Monitor pauseMonitorById(String monitorId) {
     return null;
+  }
+
+  @Override
+  public List<MonitorRun> getAllMonitorRuns(String monitorId) {
+    return monitorRunMapper.toMonitorRuns(monitorRunRepository.findAllByMonitorId(monitorId));
   }
 
   private String getAuthenticatedUserId() {

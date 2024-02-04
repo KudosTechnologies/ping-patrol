@@ -96,7 +96,6 @@ dependencies {
     implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '7.4'
 
 
-
     runtimeOnly group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '3.3.2'
 
     // Test
@@ -210,6 +209,12 @@ tasks.register('buildJavaClient', GenerateTask) {
     outputDir = openApiClientDir
     apiPackage = 'ro.kudostech.pingpatrol.api.client'
     modelPackage = 'ro.kudostech.pingpatrol.api.client'
+    typeMappings = [
+            OffsetDateTime: "Instant"
+    ]
+    importMappings = [
+            "java.time.OffsetDateTime": "java.time.Instant"
+    ]
     configOptions = [
             artifactDescription    : "generated organizationApi",
             artifactId             : "organizationApi",
@@ -231,6 +236,12 @@ tasks.register('buildJavaServer', GenerateTask) {
     outputDir = openApiServerDir
     apiPackage = 'ro.kudostech.pingpatrol.api.server'
     modelPackage = 'ro.kudostech.pingpatrol.api.server.model'
+    typeMappings = [
+            OffsetDateTime: "Instant"
+    ]
+    importMappings = [
+            "java.time.OffsetDateTime": "java.time.Instant"
+    ]
 
     // Check docs for all options: https://openapi-generator.tech/docs/generators/spring/
     configOptions = [
@@ -295,7 +306,7 @@ dockerCompose {
 }
 
 bootRun {
-    jvmArgs=["-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"]
+    jvmArgs = ["-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"]
 }
 
 build.dependsOn(acceptanceTest)

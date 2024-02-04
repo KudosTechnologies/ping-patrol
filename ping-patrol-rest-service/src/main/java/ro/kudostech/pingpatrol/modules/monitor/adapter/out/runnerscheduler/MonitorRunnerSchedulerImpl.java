@@ -1,13 +1,17 @@
 package ro.kudostech.pingpatrol.modules.monitor.adapter.out.runnerscheduler;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
 import ro.kudostech.pingpatrol.api.server.model.Monitor;
+import ro.kudostech.pingpatrol.modules.monitor.adapter.out.persistence.MonitorRepository;
+import ro.kudostech.pingpatrol.modules.monitor.adapter.out.persistence.MonitorRunRepository;
 import ro.kudostech.pingpatrol.modules.monitor.domain.service.MonitorRunnerScheduler;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ScheduledFuture;
@@ -18,7 +22,9 @@ import java.util.concurrent.ScheduledFuture;
 public class MonitorRunnerSchedulerImpl implements MonitorRunnerScheduler {
 
   private final TaskScheduler taskScheduler;
-  private Map<String, ScheduledFuture<?>> scheduledTasks = new HashMap<>();
+  private final MonitorRunRepository monitorRunRepository;
+  private final MonitorRepository monitorRepository;
+  private final Map<String, ScheduledFuture<?>> scheduledTasks = new HashMap<>();
 
   @Override
   public void scheduleMonitorRunner(Monitor monitor) {
@@ -26,9 +32,13 @@ public class MonitorRunnerSchedulerImpl implements MonitorRunnerScheduler {
       throw new IllegalStateException("Monitor already scheduled");
     }
     ScheduledFuture<?> scheduledFuture =
-        taskScheduler.schedule(
-            new HttpMonitorRunner(monitor.getUrl(), monitor.getMonitorTimeout()),
-            new CronTrigger("*/5 * * * * *"));
+        taskScheduler.scheduleWithFixedDelay(
+            new HttpMonitorRunner(
+                monitor.getId().toString(),
+                monitor.getUrl(),
+                monitor.getMonitorTimeout(),
+                monitorRunRepository),
+            Duration.ofSeconds(monitor.getMonitoringInterval()));
     scheduledTasks.put(monitor.getId().toString(), scheduledFuture);
   }
 

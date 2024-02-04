@@ -40,7 +40,8 @@ public class MonitorController implements MonitorsApi {
 
   @Override
   public ResponseEntity<List<MonitorRun>> getAllMonitorRuns(UUID monitorId) {
-    return null;
+    List<MonitorRun> monitorRuns = monitorService.getAllMonitorRuns(monitorId.toString());
+    return ResponseEntity.ok(monitorRuns);
   }
 
   @Override

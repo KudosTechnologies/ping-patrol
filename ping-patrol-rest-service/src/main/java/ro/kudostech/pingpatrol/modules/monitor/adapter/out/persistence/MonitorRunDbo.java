@@ -1,6 +1,9 @@
-package ro.kudostech.pingpatrol.modules.monitor.adapter.out.runnerscheduler;
+package ro.kudostech.pingpatrol.modules.monitor.adapter.out.persistence;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -21,10 +24,12 @@ import java.time.Instant;
 @AllArgsConstructor
 public class MonitorRunDbo {
 
-  @Id private long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long id;
   @NotNull private String monitorId;
-  private String status;
-
-  private long duration;
+  @NotNull private String status;
+  @NotNull private long duration;
   @NotNull private Instant startedAt;
+  @Nullable private String errorDetails;
 }

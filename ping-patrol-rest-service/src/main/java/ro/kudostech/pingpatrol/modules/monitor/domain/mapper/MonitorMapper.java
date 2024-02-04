@@ -14,7 +14,6 @@ import java.util.List;
     injectionStrategy = InjectionStrategy.CONSTRUCTOR,
     uses = {CommonMapper.class})
 public interface MonitorMapper {
-
   @Mapping(source = "id", target = "id", qualifiedByName = "stringToUUID")
   Monitor toMonitor(MonitorDbo monitorDbo);
 
