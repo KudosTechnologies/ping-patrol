@@ -16,4 +16,8 @@ public interface MonitorService {
     void deleteMonitorById(String monitorId);
 
     Monitor updateMonitor(String monitorId, UpdateMonitorRequest createMonitorRequest);
+
+    Monitor resumeMonitorById(String monitorId);
+
+    Monitor pauseMonitorById(String monitorId);
 }

@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ro.kudostech.pingpatrol.api.server.model.CreateMonitorRequest;
 import ro.kudostech.pingpatrol.api.server.model.Monitor;
+import ro.kudostech.pingpatrol.api.server.model.MonitorStatus;
+import ro.kudostech.pingpatrol.api.server.model.MonitorType;
 import ro.kudostech.pingpatrol.api.server.model.UpdateMonitorRequest;
 import ro.kudostech.pingpatrol.modules.monitor.adapter.out.persistence.MonitorDbo;
 import ro.kudostech.pingpatrol.modules.monitor.adapter.out.persistence.MonitorRepository;
@@ -21,6 +23,7 @@ public class MonitorServiceImpl implements MonitorService {
 
   private final MonitorMapper monitorMapper;
   private final MonitorRepository monitorRepository;
+  private final MonitorRunnerScheduler monitorRunnerScheduler;
 
   @Override
   @Transactional
@@ -31,14 +34,17 @@ public class MonitorServiceImpl implements MonitorService {
         MonitorDbo.builder()
             .userId(authenticatedUserId)
             .name(createMonitorRequest.getName())
-            .monitorType(createMonitorRequest.getMonitorType().name())
+            .type(createMonitorRequest.getMonitorType().name())
+            .status(MonitorStatus.RUNNING.name())
             .url(createMonitorRequest.getUrl())
             .monitoringInterval(createMonitorRequest.getMonitoringInterval())
             .monitorTimeout(createMonitorRequest.getMonitorTimeout())
             .build();
     monitorDbo.setUserId(authenticatedUserId);
     monitorRepository.save(monitorDbo);
-    return monitorMapper.toMonitor(monitorDbo);
+    Monitor monitor = monitorMapper.toMonitor(monitorDbo);
+    monitorRunnerScheduler.scheduleMonitorRunner(monitor);
+    return monitor;
   }
 
   @Override
@@ -72,7 +78,29 @@ public class MonitorServiceImpl implements MonitorService {
     monitorDbo.setMonitoringInterval(updateMonitorRequest.getMonitoringInterval());
     monitorDbo.setMonitorTimeout(updateMonitorRequest.getMonitorTimeout());
     monitorRepository.save(monitorDbo);
+    Monitor monitor = monitorMapper.toMonitor(monitorDbo);
+    monitorRunnerScheduler.pauseMonitorRunner(monitor.getId().toString());
+    monitorRunnerScheduler.scheduleMonitorRunner(monitor);
     return monitorMapper.toMonitor(monitorDbo);
+  }
+
+  @Override
+  @Transactional
+  public Monitor resumeMonitorById(String monitorId) {
+    var monitorDbo =
+        monitorRepository
+            .findById(monitorId)
+            .orElseThrow(() -> new NotFoundException("Monitor not found"));
+    monitorDbo.setStatus(MonitorStatus.RUNNING.name());
+    monitorRepository.save(monitorDbo);
+    Monitor monitor = monitorMapper.toMonitor(monitorDbo);
+    monitorRunnerScheduler.scheduleMonitorRunner(monitor);
+    return monitor;
+  }
+
+  @Override
+  public Monitor pauseMonitorById(String monitorId) {
+    return null;
   }
 
   private String getAuthenticatedUserId() {

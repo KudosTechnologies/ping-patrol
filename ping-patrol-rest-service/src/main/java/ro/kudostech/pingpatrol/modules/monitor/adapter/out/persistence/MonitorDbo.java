@@ -32,11 +32,9 @@ public class MonitorDbo {
   @Column(unique = true)
   private String name;
 
-  @NotNull private String monitorType;
-
+  @NotNull private String type;
+  @NotNull private String status;
   @NotNull private String url;
-
   @NotNull private Integer monitoringInterval;
-
   @NotNull private Integer monitorTimeout;
 }
