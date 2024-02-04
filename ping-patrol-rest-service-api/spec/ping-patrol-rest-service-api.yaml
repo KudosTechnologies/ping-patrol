@@ -63,37 +63,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RFC7807Problem'
-    put:
-      summary: Update a monitor
-      operationId: updateMonitor
-      tags:
-        - monitors
-      requestBody:
-        description: Monitor object that needs to be added
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateMonitorRequest'
-      responses:
-        '200':
-          description: Monitor updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Monitor'
-        '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RFC7807Problem'
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RFC7807Problem'
   /monitors/{monitorId}:
     parameters:
       - $ref: '#/components/parameters/MonitorIdPathParameter'
@@ -131,6 +100,37 @@ paths:
           description: Monitor deleted
         '404':
           description: Monitor not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RFC7807Problem'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RFC7807Problem'
+    put:
+      summary: Update a monitor
+      operationId: updateMonitor
+      tags:
+        - monitors
+      requestBody:
+        description: Monitor object that needs to be added
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMonitorRequest'
+      responses:
+        '200':
+          description: Monitor updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Monitor'
+        '400':
+          description: Bad request
           content:
             application/json:
               schema:

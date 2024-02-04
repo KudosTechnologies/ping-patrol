@@ -1,5 +1,6 @@
 package ro.kudostech.pingpatrol.modules.monitor.adapter.in.rest;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import ro.kudostech.pingpatrol.api.server.MonitorsApi;
 import ro.kudostech.pingpatrol.api.server.model.CreateMonitorRequest;
@@ -7,19 +8,31 @@ import ro.kudostech.pingpatrol.api.server.model.Monitor;
 import ro.kudostech.pingpatrol.api.server.model.MonitorEvent;
 import ro.kudostech.pingpatrol.api.server.model.MonitorProbes;
 import ro.kudostech.pingpatrol.api.server.model.UpdateMonitorRequest;
+import org.springframework.web.bind.annotation.RestController;
+import ro.kudostech.pingpatrol.modules.monitor.ports.MonitorService;
 
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
+@RestController
+@RequiredArgsConstructor
 public class MonitorController implements MonitorsApi {
+
+  private final MonitorService monitorService;
+
   @Override
   public ResponseEntity<Monitor> createMonitor(CreateMonitorRequest createMonitorRequest) {
-    return null;
+
+    Monitor monitor = monitorService.createMonitor(createMonitorRequest);
+    URI location = URI.create("/monitors/" + monitor.getId());
+    return ResponseEntity.created(location).body(monitor);
   }
 
   @Override
   public ResponseEntity<Void> deleteMonitorById(UUID monitorId) {
-    return null;
+    monitorService.deleteMonitorById(monitorId.toString());
+    return ResponseEntity.noContent().build();
   }
 
   @Override
@@ -34,12 +47,12 @@ public class MonitorController implements MonitorsApi {
 
   @Override
   public ResponseEntity<List<Monitor>> getAllMonitors() {
-    return null;
+    return ResponseEntity.ok(monitorService.getAllMonitors());
   }
 
   @Override
   public ResponseEntity<Monitor> getMonitorById(UUID monitorId) {
-    return null;
+    return ResponseEntity.ok(monitorService.getMonitorById(monitorId.toString()));
   }
 
   @Override
@@ -58,7 +71,7 @@ public class MonitorController implements MonitorsApi {
   }
 
   @Override
-  public ResponseEntity<Monitor> updateMonitor(UpdateMonitorRequest updateMonitorRequest) {
-    return null;
+  public ResponseEntity<Monitor> updateMonitor(UUID monitorId, UpdateMonitorRequest updateMonitorRequest) {
+    return ResponseEntity.ok(monitorService.updateMonitor(monitorId.toString(), updateMonitorRequest));
   }
 }
