@@ -1,6 +1,7 @@
 package ro.kudostech.pingpatrol.configuration;
 
 import java.net.URI;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.experimental.UtilityClass;
@@ -22,7 +23,7 @@ public class Rfc7807ProblemBuilder {
     problem.setTitle(httpStatus.name());
     problem.setDetail(exception.getMessage());
     problem.setInstance(URI.create(request.getDescription(false)));
-    problem.setTimestamp(OffsetDateTime.now());
+    problem.setTimestamp(Instant.now());
     problem.setViolations(violations);
     // TODO: add traceId
 

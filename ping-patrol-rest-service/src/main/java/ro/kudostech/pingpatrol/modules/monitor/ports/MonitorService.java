@@ -2,6 +2,7 @@ package ro.kudostech.pingpatrol.modules.monitor.ports;
 
 import ro.kudostech.pingpatrol.api.server.model.CreateMonitorRequest;
 import ro.kudostech.pingpatrol.api.server.model.Monitor;
+import ro.kudostech.pingpatrol.api.server.model.MonitorRun;
 import ro.kudostech.pingpatrol.api.server.model.UpdateMonitorRequest;
 
 import java.util.List;
@@ -16,4 +17,10 @@ public interface MonitorService {
     void deleteMonitorById(String monitorId);
 
     Monitor updateMonitor(String monitorId, UpdateMonitorRequest createMonitorRequest);
+
+    Monitor resumeMonitorById(String monitorId);
+
+    Monitor pauseMonitorById(String monitorId);
+
+    List<MonitorRun> getAllMonitorRuns(String monitorId);
 }

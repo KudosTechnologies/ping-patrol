@@ -1,6 +1,6 @@
 package ro.kudostech.pingpatrol.modules.monitor.adapter.out.persistence;
 
-import jakarta.persistence.Column;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,28 +13,23 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Instant;
+
 @Entity
-@Table(name = "monitor")
+@Table(name = "monitor_run")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MonitorDbo {
+public class MonitorRunDbo {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
-  private String id;
-
-  @NotNull private String userId;
-
-  @NotNull
-  @Column(unique = true)
-  private String name;
-
-  @NotNull private String type;
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long id;
+  @NotNull private String monitorId;
   @NotNull private String status;
-  @NotNull private String url;
-  @NotNull private Integer monitoringInterval;
-  @NotNull private Integer monitorTimeout;
+  @NotNull private long duration;
+  @NotNull private Instant startedAt;
+  @Nullable private String errorDetails;
 }
