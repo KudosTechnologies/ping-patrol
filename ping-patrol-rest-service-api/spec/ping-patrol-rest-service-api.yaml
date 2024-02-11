@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.1.0
 info:
   version: versionNumber
   title: PingPatrol Integration Platform API
@@ -301,6 +301,7 @@ components:
           $ref: '#/components/schemas/MonitorStatus'
         url:
           type: string
+          pattern: '^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?'
           description: The url of the monitor
           example: https://www.google.com
         monitoringInterval:
@@ -323,7 +324,7 @@ components:
           type: string
           description: The name of the monitor
           example: Monitor 1
-        monitorType:
+        type:
           $ref: '#/components/schemas/MonitorType'
         url:
           type: string
@@ -349,10 +350,11 @@ components:
           type: string
           description: The name of the monitor
           example: Monitor 1
-        monitorType:
+        type:
           $ref: '#/components/schemas/MonitorType'
         url:
           type: string
+          format: uri
           description: The url of the monitor
           example: https://www.google.com
         monitoringInterval:

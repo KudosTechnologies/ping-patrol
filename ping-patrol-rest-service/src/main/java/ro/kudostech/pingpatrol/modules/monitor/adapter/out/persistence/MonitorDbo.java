@@ -13,6 +13,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.net.URI;
+
 @Entity
 @Table(name = "monitor")
 @Getter

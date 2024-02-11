@@ -38,9 +38,9 @@ public class MonitorServiceImpl implements MonitorService {
         MonitorDbo.builder()
             .userId(authenticatedUserId)
             .name(createMonitorRequest.getName())
-            .type(createMonitorRequest.getMonitorType().name())
+            .type(createMonitorRequest.getType().name())
             .status(MonitorStatus.RUNNING.name())
-            .url(createMonitorRequest.getUrl())
+            .url(createMonitorRequest.getUrl().toString())
             .monitoringInterval(createMonitorRequest.getMonitoringInterval())
             .monitorTimeout(createMonitorRequest.getMonitorTimeout())
             .build();
@@ -78,7 +78,8 @@ public class MonitorServiceImpl implements MonitorService {
             .findById(monitorId)
             .orElseThrow(() -> new NotFoundException("Monitor not found"));
     monitorDbo.setName(updateMonitorRequest.getName());
-    monitorDbo.setUrl(updateMonitorRequest.getUrl());
+    monitorDbo.setType(updateMonitorRequest.getType().name());
+    monitorDbo.setUrl(updateMonitorRequest.getUrl().toString());
     monitorDbo.setMonitoringInterval(updateMonitorRequest.getMonitoringInterval());
     monitorDbo.setMonitorTimeout(updateMonitorRequest.getMonitorTimeout());
     monitorRepository.save(monitorDbo);

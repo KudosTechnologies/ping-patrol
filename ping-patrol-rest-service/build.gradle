@@ -262,6 +262,7 @@ tasks.register('buildJavaServer', GenerateTask) {
             skipDefaultInterface          : "true",
             useSpringBoot3                : "true",
             useBeanValidation             : "true",
+            performBeanValidation         : "true",
             useTags                       : "true",
             // @lombok.Generated makes jacoco ignore the generated classes. The @Generated annotation added by openapi does not have the correct retention
             // period for this. See also https://www.baeldung.com/jacoco-report-exclude

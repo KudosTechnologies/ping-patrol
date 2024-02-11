@@ -15,9 +15,11 @@ import java.util.List;
     uses = {CommonMapper.class})
 public interface MonitorMapper {
   @Mapping(source = "id", target = "id", qualifiedByName = "stringToUUID")
+//  @Mapping(source = "url", target = "url", qualifiedByName = "stringToURI")
   Monitor toMonitor(MonitorDbo monitorDbo);
 
   @Mapping(source = "id", target = "id", qualifiedByName = "UUIDToString")
+//  @Mapping(source = "url", target = "url", qualifiedByName = "URIToString")
   MonitorDbo toMonitorDbo(Monitor monitor);
 
   List<Monitor> toMonitors(List<MonitorDbo> monitorDbos);
