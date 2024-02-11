@@ -23,4 +23,6 @@ public interface MonitorService {
     Monitor pauseMonitorById(String monitorId);
 
     List<MonitorRun> getAllMonitorRuns(String monitorId);
+
+    void deleteMonitorRuns(String monitorId);
 }

@@ -1,4 +1,5 @@
 import {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
 import {pingPatrolApi} from "../../utils/PingPatrolApi";
 import {useKeycloak} from "@react-keycloak/web";
 import {handleLogError} from "../../utils/Helpers";
@@ -7,6 +8,7 @@ import DeleteForeverTwoToneIcon from "@mui/icons-material/DeleteForeverTwoTone";
 import PauseCircleFilledTwoToneIcon from "@mui/icons-material/PauseCircleFilledTwoTone";
 import AddCircleOutlineTwoToneIcon from "@mui/icons-material/AddCircleOutlineTwoTone";
 import PlayCircleFilledTwoToneIcon from '@mui/icons-material/PlayCircleFilledTwoTone';
+import LaunchTwoToneIcon from '@mui/icons-material/LaunchTwoTone';
 import {
     Table,
     TableHead,
@@ -17,7 +19,7 @@ import {
     Button,
     Box,
     Container,
-    Paper,
+    Paper, Tooltip,
 } from "@mui/material";
 import {Monitor} from "../../utils/PingPatrolApiTypes";
 import MonitorFormDialog from "../MonitorFormDialog.tsx";
@@ -28,6 +30,7 @@ const MonitorsDashboard = () => {
     const {keycloak} = useKeycloak();
     const [dialogOpen, setDialogOpen] = useState(false);
     const [editingMonitor, setEditingMonitor] = useState<Monitor | undefined>(undefined);
+    const navigate = useNavigate();
 
     useEffect(() => {
         handleGetMonitors().then();
@@ -93,6 +96,10 @@ const MonitorsDashboard = () => {
             .catch(handleLogError);
     }
 
+    const handleMonitorClick = (monitorId: string) => {
+        navigate(`/dashboard/monitorOverview/${monitorId}`);
+    };
+
 
     return (
         <Container>
@@ -110,7 +117,24 @@ const MonitorsDashboard = () => {
                     <TableBody>
                         {monitors.map((monitor) => (
                             <TableRow key={monitor.id}>
-                                <TableCell>{monitor.name}</TableCell>
+                                <TableCell
+                                    sx={{
+                                        cursor: 'pointer',
+                                        textDecoration: 'underline',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '5px',
+                                        flexGrow: 1,
+                                        minHeight: '80px'
+
+                                    }}
+                                    onClick={() => handleMonitorClick(monitor.id)}
+                                >
+                                    {monitor.name}
+                                    <Tooltip title="View Details">
+                                        <LaunchTwoToneIcon/>
+                                    </Tooltip>
+                                </TableCell>
                                 <TableCell>{monitor.type}</TableCell>
                                 <TableCell>{monitor.url}</TableCell>
                                 <TableCell style={{backgroundColor: monitor.status === "RUNNING" ? "green" : "red"}}>

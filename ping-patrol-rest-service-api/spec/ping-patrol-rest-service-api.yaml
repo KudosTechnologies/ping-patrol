@@ -390,6 +390,11 @@ components:
         id:
           type: integer
           description: The id of the monitor event
+        monitorId:
+          type: string
+          description: The UUID of the monitor
+          example: 1a7588a5-a684-4cd7-8f98-11e660af2289
+          format: uuid
         startedAt:
           type: string
           format: date-time
