@@ -105,7 +105,15 @@ public class MonitorServiceImpl implements MonitorService {
 
   @Override
   public Monitor pauseMonitorById(String monitorId) {
-    return null;
+    var monitorDbo =
+        monitorRepository
+            .findById(monitorId)
+            .orElseThrow(() -> new NotFoundException("Monitor not found"));
+    monitorDbo.setStatus(MonitorStatus.PAUSED.name());
+    monitorRepository.save(monitorDbo);
+    Monitor monitor = monitorMapper.toMonitor(monitorDbo);
+    monitorRunnerScheduler.pauseMonitorRunner(monitor.getId().toString());
+    return monitor;
   }
 
   @Override

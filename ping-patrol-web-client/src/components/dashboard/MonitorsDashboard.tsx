@@ -6,6 +6,7 @@ import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import DeleteForeverTwoToneIcon from "@mui/icons-material/DeleteForeverTwoTone";
 import PauseCircleFilledTwoToneIcon from "@mui/icons-material/PauseCircleFilledTwoTone";
 import AddCircleOutlineTwoToneIcon from "@mui/icons-material/AddCircleOutlineTwoTone";
+import PlayCircleFilledTwoToneIcon from '@mui/icons-material/PlayCircleFilledTwoTone';
 import {
     Table,
     TableHead,
@@ -21,7 +22,8 @@ import {
 import {Monitor} from "../../utils/PingPatrolApiTypes";
 import MonitorFormDialog from "../MonitorFormDialog.tsx";
 
-const Monitors = () => {
+
+const MonitorsDashboard = () => {
     const [monitors, setMonitors] = useState<Monitor[]>([]);
     const {keycloak} = useKeycloak();
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -67,6 +69,31 @@ const Monitors = () => {
         handleCloseDialog();
     };
 
+    const handlePauseMonitor = (monitorId: string) => {
+        pingPatrolApi.pauseMonitor(keycloak.token!, monitorId)
+            .then(() => {
+                handleGetMonitors().then();
+            })
+            .catch(handleLogError);
+    }
+
+    const handleResumeMonitor = (monitorId: string) => {
+        pingPatrolApi.resumeMonitor(keycloak.token!, monitorId)
+            .then(() => {
+                handleGetMonitors().then();
+            })
+            .catch(handleLogError);
+    }
+
+    const handleDeleteMonitor = (monitorId: string) => {
+        pingPatrolApi.deleteMonitor(keycloak.token!, monitorId)
+            .then(() => {
+                handleGetMonitors().then();
+            })
+            .catch(handleLogError);
+    }
+
+
     return (
         <Container>
             <Paper elevation={3} sx={{margin: "16px 0", overflowX: "auto"}}>
@@ -86,15 +113,23 @@ const Monitors = () => {
                                 <TableCell>{monitor.name}</TableCell>
                                 <TableCell>{monitor.type}</TableCell>
                                 <TableCell>{monitor.url}</TableCell>
-                                <TableCell>{monitor.status}</TableCell>
+                                <TableCell style={{backgroundColor: monitor.status === "RUNNING" ? "green" : "red"}}>
+                                    {monitor.status}
+                                </TableCell>
                                 <TableCell>
-                                    <IconButton>
-                                        <PauseCircleFilledTwoToneIcon/>
-                                    </IconButton>
+                                    {monitor.status === "RUNNING" ? (
+                                        <IconButton onClick={() => handlePauseMonitor(monitor.id)}>
+                                            <PauseCircleFilledTwoToneIcon/>
+                                        </IconButton>
+                                    ) : (
+                                        <IconButton onClick={() => handleResumeMonitor(monitor.id)}>
+                                            <PlayCircleFilledTwoToneIcon/>
+                                        </IconButton>
+                                    )}
                                     <IconButton onClick={() => handleOpenDialog(monitor)}>
                                         <EditTwoToneIcon/>
                                     </IconButton>
-                                    <IconButton>
+                                    <IconButton onClick={() => handleDeleteMonitor(monitor.id)}>
                                         <DeleteForeverTwoToneIcon/>
                                     </IconButton>
                                 </TableCell>
@@ -123,4 +158,4 @@ const Monitors = () => {
     );
 };
 
-export default Monitors;
+export default MonitorsDashboard;

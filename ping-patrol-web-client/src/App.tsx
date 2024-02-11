@@ -4,9 +4,9 @@ import HomeWrapperPage from "./components/presentation/HomeWrapper";
 import MonitoringPage from "./components/presentation/Monitoring";
 import IntegrationPage from "./components/presentation/Integration";
 import DashboardPage from "./components/dashboard/DashboardMenu";
-import Monitors from "./components/dashboard/Monitors";
-import Dashboard from "./components/dashboard/Dashboard";
-import Incidents from "./components/dashboard/Incidents";
+import MonitorsDashboard from "./components/dashboard/MonitorsDashboard.tsx";
+import OverviewDashboard from "./components/dashboard/OverviewDashboard.tsx";
+import IncidentsDashboard from "./components/dashboard/IncidentsDashboard.tsx";
 import PrivateRoute from "./utils/PrivateRoute";
 
 const App: React.FC = () => (
@@ -23,7 +23,7 @@ const App: React.FC = () => (
           element={
             <PrivateRoute>
               {" "}
-              <Dashboard />
+              <OverviewDashboard />
             </PrivateRoute>
           }
         />
@@ -31,7 +31,7 @@ const App: React.FC = () => (
           path="monitors"
           element={
             <PrivateRoute>
-              <Monitors />
+              <MonitorsDashboard />
             </PrivateRoute>
           }
         />
@@ -39,7 +39,7 @@ const App: React.FC = () => (
           path="incidents"
           element={
             <PrivateRoute>
-              <Incidents />
+              <IncidentsDashboard />
             </PrivateRoute>
           }
         />
