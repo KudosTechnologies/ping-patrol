@@ -92,7 +92,7 @@ export default function DashboardPage() {
         <ListItemIcon>
           <DashboardIcon />
         </ListItemIcon>
-        <ListItemText primary="Dashboard" />
+        <ListItemText primary="Overview" />
       </ListItemButton>
       <ListItemButton
         onClick={() => handleMenuItemClick("Monitor", "/dashboard/monitors")}
@@ -100,7 +100,7 @@ export default function DashboardPage() {
         <ListItemIcon>
           <MonitorHeartIcon />
         </ListItemIcon>
-        <ListItemText primary="Monitor" />
+        <ListItemText primary="Monitors" />
       </ListItemButton>
       <ListItemButton
         onClick={() => handleMenuItemClick("Incidents", "/dashboard/incidents")}

@@ -35,7 +35,7 @@ public class MonitorRunnerSchedulerImpl implements MonitorRunnerScheduler {
         taskScheduler.scheduleWithFixedDelay(
             new HttpMonitorRunner(
                 monitor.getId().toString(),
-                monitor.getUrl(),
+                monitor.getUrl().toString(),
                 monitor.getMonitorTimeout(),
                 monitorRunRepository),
             Duration.ofSeconds(monitor.getMonitoringInterval()));
