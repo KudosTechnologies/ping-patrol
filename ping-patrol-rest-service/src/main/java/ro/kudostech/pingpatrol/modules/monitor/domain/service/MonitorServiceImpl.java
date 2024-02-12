@@ -2,6 +2,7 @@ package ro.kudostech.pingpatrol.modules.monitor.domain.service;
 
 import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Limit;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -118,7 +119,14 @@ public class MonitorServiceImpl implements MonitorService {
 
   @Override
   public List<MonitorRun> getAllMonitorRuns(String monitorId) {
-    return monitorRunMapper.toMonitorRuns(monitorRunRepository.findAllByMonitorId(monitorId));
+    return monitorRunMapper.toMonitorRuns(
+        monitorRunRepository.findAllByMonitorId(monitorId, Limit.of(20)));
+  }
+
+  @Override
+  @Transactional
+  public void deleteMonitorRuns(String monitorId) {
+    monitorRunRepository.deleteAllByMonitorId(monitorId);
   }
 
   private String getAuthenticatedUserId() {

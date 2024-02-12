@@ -1,5 +1,5 @@
 import axios from "axios";
-import {Monitor} from "./PingPatrolApiTypes";
+import {Monitor, MonitorRun} from "./PingPatrolApiTypes";
 
 const PING_PATROL_BASE_URL = "http://localhost:8080";
 
@@ -18,6 +18,7 @@ export const pingPatrolApi = {
     pauseMonitor,
     resumeMonitor,
     deleteMonitor,
+    getMonitorRuns,
 };
 
 function getMonitors(token: string): Promise<Monitor[]> {
@@ -67,7 +68,14 @@ function deleteMonitor(token: string, monitorId: string): Promise<void> {
             headers: {Authorization: bearerToken(token)},
         })
         .then((response) => response.data);
+}
 
+function getMonitorRuns(token: string, monitorId: string): Promise<MonitorRun[]> {
+    return instance
+        .get(`/v1/monitors/${monitorId}/runs`, {
+            headers: {Authorization: bearerToken(token)},
+        })
+        .then((response) => response.data);
 }
 
 function bearerToken(token: string) {

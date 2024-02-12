@@ -18,3 +18,17 @@ export enum MonitorStatus {
     PAUSED = "PAUSED",
     STOPPED = "STOPPED",
 }
+
+export type MonitorRun = {
+    id: number;
+    monitorId: string;
+    status: MonitorRunStatus;
+    duration: number;
+    startedAt: string;
+    errorDetails: string;
+};
+
+export enum MonitorRunStatus {
+    REACHABLE = "REACHABLE",
+    UNREACHABLE = "UNREACHABLE",
+}

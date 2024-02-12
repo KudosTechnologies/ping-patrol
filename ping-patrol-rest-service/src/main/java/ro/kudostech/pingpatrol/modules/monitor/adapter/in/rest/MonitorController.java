@@ -62,7 +62,8 @@ public class MonitorController implements MonitorsApi {
 
   @Override
   public ResponseEntity<Monitor> resetMonitorById(UUID monitorId) {
-    return null;
+    monitorService.deleteMonitorRuns(monitorId.toString());
+    return ResponseEntity.ok().build();
   }
 
   @Override
