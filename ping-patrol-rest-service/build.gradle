@@ -83,7 +83,7 @@ dependencies {
     implementation 'org.springframework.modulith:spring-modulith-starter-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
-    implementation group: 'org.keycloak', name: 'keycloak-admin-client', version: '23.0.5'
+    implementation group: 'org.keycloak', name: 'keycloak-admin-client', version: '23.0.6'
     runtimeOnly 'org.springframework.boot:spring-boot-starter-actuator'
 
     implementation group: 'io.swagger.core.v3', name: 'swagger-annotations', version: '2.2.20'
@@ -102,7 +102,7 @@ dependencies {
     testImplementation 'org.springframework.modulith:spring-modulith-starter-test'
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
-    testImplementation(platform("org.junit:junit-bom:5.10.1"))
+    testImplementation(platform("org.junit:junit-bom:5.10.2"))
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
