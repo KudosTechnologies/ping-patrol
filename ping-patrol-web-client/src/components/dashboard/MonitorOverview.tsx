@@ -4,6 +4,7 @@ import {pingPatrolApi} from '../../utils/PingPatrolApi';
 import {useKeycloak} from '@react-keycloak/web';
 import {MonitorRun} from "../../utils/PingPatrolApiTypes.ts";
 import {Container, LinearProgress, Paper, Typography} from '@mui/material';
+import {LineChart} from "@mui/x-charts";
 
 const MonitorOverview = () => {
     const {monitorId} = useParams();
@@ -31,6 +32,10 @@ const MonitorOverview = () => {
 
     const averageResponseTime = monitorRuns.reduce((acc, curr) => acc + curr.duration, 0) / monitorRuns.length || 0;
 
+    const uData = monitorRuns.map(run => run.duration);
+    const xLabels = monitorRuns.map(run => new Date(run.startedAt).toLocaleTimeString());
+
+
     return (
         <Container sx={{mt: 4}}>
             <Typography variant="h4" gutterBottom>Monitor Overview</Typography>
@@ -47,8 +52,26 @@ const MonitorOverview = () => {
                 <Typography variant="h6" gutterBottom>Average Response Time</Typography>
                 <Typography>{`Average Response Time: ${averageResponseTime.toFixed(2)}ms`}</Typography>
             </Paper>
-            {/* You can add more sections here, such as a chart for monitor runs, similar to the Paper components above */}
+
+            <Paper elevation={3} sx={{p: 2, mb: 3}}>
+                <Typography variant="h6" gutterBottom>Response Time Chart</Typography>
+                <LineChart
+                    width={1100}
+                    height={300}
+                    series={[{data: uData, label: 'Milliseconds', area: true, showMark: true}]}
+                    xAxis={[{scaleType: 'point', data: xLabels}]}
+                    sx={{
+                        '.MuiLineElement-root': {
+                            display: 'none',
+                        },
+                    }}
+                />
+            </Paper>
+
+
         </Container>
+
+
     );
 };
 

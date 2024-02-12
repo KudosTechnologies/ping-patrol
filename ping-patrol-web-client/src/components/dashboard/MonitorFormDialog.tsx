@@ -1,4 +1,4 @@
-import {Monitor, MonitorStatus, MonitorType} from "../utils/PingPatrolApiTypes.ts";
+import {Monitor, MonitorStatus, MonitorType} from "../../utils/PingPatrolApiTypes.ts";
 import React, {useEffect, useState} from "react";
 import {
     Button,

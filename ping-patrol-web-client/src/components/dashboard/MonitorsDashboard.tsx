@@ -22,7 +22,9 @@ import {
     Paper, Tooltip,
 } from "@mui/material";
 import {Monitor} from "../../utils/PingPatrolApiTypes";
-import MonitorFormDialog from "../MonitorFormDialog.tsx";
+import MonitorFormDialog from "./MonitorFormDialog.tsx";
+
+
 
 
 const MonitorsDashboard = () => {
