@@ -1,16 +1,23 @@
 package ro.kudostech.pingpatrol.modules.monitor.domain.service;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.ValidatorFactory;
 import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.HibernateValidator;
 import org.springframework.data.domain.Limit;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ro.kudostech.pingpatrol.api.server.model.CreateMonitorRequest;
 import ro.kudostech.pingpatrol.api.server.model.Monitor;
+import ro.kudostech.pingpatrol.api.server.model.MonitorPatchOperation;
 import ro.kudostech.pingpatrol.api.server.model.MonitorRun;
 import ro.kudostech.pingpatrol.api.server.model.MonitorStatus;
 import ro.kudostech.pingpatrol.api.server.model.UpdateMonitorRequest;
+import ro.kudostech.pingpatrol.common.exception.PropertyPathProvider;
 import ro.kudostech.pingpatrol.modules.monitor.adapter.out.persistence.MonitorDbo;
 import ro.kudostech.pingpatrol.modules.monitor.adapter.out.persistence.MonitorRepository;
 import ro.kudostech.pingpatrol.modules.monitor.adapter.out.persistence.MonitorRunRepository;
@@ -19,16 +26,23 @@ import ro.kudostech.pingpatrol.modules.monitor.domain.mapper.MonitorRunMapper;
 import ro.kudostech.pingpatrol.modules.monitor.ports.MonitorService;
 
 import java.util.List;
+import java.util.Set;
 
+import static jakarta.validation.Validation.byProvider;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MonitorServiceImpl implements MonitorService {
+
+  private static final String MONITOR_NOT_FOUND = "Monitor not found";
 
   private final MonitorMapper monitorMapper;
   private final MonitorRunMapper monitorRunMapper;
   private final MonitorRepository monitorRepository;
   private final MonitorRunRepository monitorRunRepository;
   private final MonitorRunnerScheduler monitorRunnerScheduler;
+  private final MonitorPatchService monitorPatchService;
 
   @Override
   @Transactional
@@ -41,7 +55,7 @@ public class MonitorServiceImpl implements MonitorService {
             .name(createMonitorRequest.getName())
             .type(createMonitorRequest.getType().name())
             .status(MonitorStatus.RUNNING.name())
-            .url(createMonitorRequest.getUrl().toString())
+            .url(createMonitorRequest.getUrl())
             .monitoringInterval(createMonitorRequest.getMonitoringInterval())
             .monitorTimeout(createMonitorRequest.getMonitorTimeout())
             .build();
@@ -58,7 +72,7 @@ public class MonitorServiceImpl implements MonitorService {
     return monitorMapper.toMonitor(
         monitorRepository
             .findById(monitorId)
-            .orElseThrow(() -> new NotFoundException("Monitor not found")));
+            .orElseThrow(() -> new NotFoundException(MONITOR_NOT_FOUND)));
   }
 
   @Override
@@ -77,7 +91,7 @@ public class MonitorServiceImpl implements MonitorService {
     var monitorDbo =
         monitorRepository
             .findById(monitorId)
-            .orElseThrow(() -> new NotFoundException("Monitor not found"));
+            .orElseThrow(() -> new NotFoundException(MONITOR_NOT_FOUND));
     monitorDbo.setName(updateMonitorRequest.getName());
     monitorDbo.setType(updateMonitorRequest.getType().name());
     monitorDbo.setUrl(updateMonitorRequest.getUrl().toString());
@@ -96,7 +110,7 @@ public class MonitorServiceImpl implements MonitorService {
     var monitorDbo =
         monitorRepository
             .findById(monitorId)
-            .orElseThrow(() -> new NotFoundException("Monitor not found"));
+            .orElseThrow(() -> new NotFoundException(MONITOR_NOT_FOUND));
     monitorDbo.setStatus(MonitorStatus.RUNNING.name());
     monitorRepository.save(monitorDbo);
     Monitor monitor = monitorMapper.toMonitor(monitorDbo);
@@ -109,7 +123,7 @@ public class MonitorServiceImpl implements MonitorService {
     var monitorDbo =
         monitorRepository
             .findById(monitorId)
-            .orElseThrow(() -> new NotFoundException("Monitor not found"));
+            .orElseThrow(() -> new NotFoundException(MONITOR_NOT_FOUND));
     monitorDbo.setStatus(MonitorStatus.PAUSED.name());
     monitorRepository.save(monitorDbo);
     Monitor monitor = monitorMapper.toMonitor(monitorDbo);
@@ -127,6 +141,36 @@ public class MonitorServiceImpl implements MonitorService {
   @Transactional
   public void deleteMonitorRuns(String monitorId) {
     monitorRunRepository.deleteAllByMonitorId(monitorId);
+  }
+
+  @Transactional
+  public Monitor patchMonitorById(
+      String monitorId, List<MonitorPatchOperation> monitorPatchOperation) {
+    MonitorDbo monitorDbo =
+        monitorRepository
+            .findById(monitorId)
+            .orElseThrow(() -> new NotFoundException(MONITOR_NOT_FOUND));
+    Set<ConstraintViolation<?>> violations =
+        monitorPatchService.patch(monitorDbo, monitorPatchOperation);
+
+    try (ValidatorFactory validatorFactory =
+        byProvider(HibernateValidator.class)
+            .configure()
+            .propertyNodeNameProvider(new PropertyPathProvider())
+            .buildValidatorFactory()) {
+      violations.addAll(validatorFactory.getValidator().validate(monitorDbo));
+    }
+
+    if (!violations.isEmpty()) {
+      log.info(
+          "Could not validate patches for user {}.\nFound the following violations: {}",
+          monitorDbo,
+          violations);
+      throw new ConstraintViolationException("violations", violations);
+    } else {
+      log.debug("Successfully validated patches for user {}.", monitorDbo);
+    }
+    return monitorMapper.toMonitor(monitorDbo);
   }
 
   private String getAuthenticatedUserId() {
