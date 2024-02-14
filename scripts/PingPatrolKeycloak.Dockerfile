@@ -1,4 +1,4 @@
-FROM quay.io/keycloak/keycloak:23.0.5
+FROM quay.io/keycloak/keycloak:23.0.6
 
 ENV KEYCLOAK_HOME /opt/keycloak
 ADD scripts/config/keycloak/keycloak.conf ${KEYCLOAK_HOME}/conf/

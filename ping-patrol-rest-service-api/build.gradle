@@ -4,7 +4,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "org.openapitools:openapi-generator-gradle-plugin:7.2.0"
+        classpath "org.openapitools:openapi-generator-gradle-plugin:7.3.0"
     }
 }
 
