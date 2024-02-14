@@ -16,7 +16,7 @@ export enum MonitorType {
 export enum MonitorStatus {
     RUNNING = "RUNNING",
     PAUSED = "PAUSED",
-    STOPPED = "STOPPED",
+    DOWN = "DOWN",
 }
 
 export type MonitorRun = {
