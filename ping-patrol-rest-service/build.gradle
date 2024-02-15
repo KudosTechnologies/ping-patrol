@@ -123,7 +123,7 @@ dependencies {
     acceptanceImplementation 'javax.validation:validation-api:2.0.1.Final'
     acceptanceImplementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
     acceptanceImplementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.3.1'
-    acceptanceImplementation group: 'org.bitbucket.b_c', name: 'jose4j', version: '0.9.4'
+    acceptanceImplementation group: 'org.bitbucket.b_c', name: 'jose4j', version: '0.9.5'
 
     acceptanceImplementation group: 'com.github.tomakehurst', name: 'wiremock-jre8-standalone', version: '3.0.1'
 
