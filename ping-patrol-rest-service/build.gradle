@@ -151,12 +151,12 @@ test {
 tasks.withType(Test).configureEach {
     testLogging.showStandardStreams = true
 }
+
 tasks.register('acceptanceTest', Test) {
     description = "Runs the acceptance tests defined via Cucumber"
     group = "testing"
     testClassesDirs = sourceSets.acceptance.output.classesDirs
     classpath = sourceSets.acceptance.runtimeClasspath
-    finalizedBy "jacocoAcceptanceTestReport"
 }
 
 jacoco {
@@ -168,6 +168,8 @@ tasks.withType(JacocoReport).configureEach {
         html.required = true
     }
 }
+
+
 jacocoTestReport {
     description = "Generates jacoco code coverage report for unit test tasks."
     group = "reporting"
@@ -176,27 +178,56 @@ jacocoTestReport {
         xml.required = true
         html.required = true
     }
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: [
+                            '**/ro/kudostech/pingpatrol/api/client/**',
+                            '**/ro/kudostech/pingpatrol/api/server/**'
+                    ])
+        }))
+    }
 }
 tasks.register('jacocoAcceptanceTestReport', JacocoReport) {
     description = "Generates jacoco code coverage report for acceptance test tasks."
     group = "reporting"
     executionData acceptanceTest
     sourceSets sourceSets.main
+    classDirectories.setFrom(files(classDirectories.files.collect {
+        fileTree(dir: it, exclude: [
+                '**/ro/kudostech/pingpatrol/api/client/**',
+                '**/ro/kudostech/pingpatrol/api/server/**'
+        ])
+    }))
+
+
     reports {
         xml.required = true
         html.required = true
     }
 }
 tasks.register('allTestReport', JacocoReport) {
+    doFirst {
+        println "Generating all test report"
+    }
     description = "Generates jacoco code coverage report for unit, integration und acceptance test tasks."
     group = "reporting"
     executionData test, acceptanceTest
     sourceSets sourceSets.main
+
+    classDirectories.setFrom(files(classDirectories.files.collect {
+        fileTree(dir: it, exclude: [
+                '**/ro/kudostech/pingpatrol/api/client/**',
+                '**/ro/kudostech/pingpatrol/api/server/**'
+        ])
+    }))
+
     reports {
         xml.required = true
         html.required = true
     }
 }
+
 
 // https://openapi-generator.tech/docs/generators/java
 tasks.register('buildJavaClient', GenerateTask) {
@@ -260,7 +291,6 @@ tasks.register('buildJavaServer', GenerateTask) {
 
 
 tasks.register('openapiPackageInfoConfig') {
-    dependsOn 'buildJavaServer'
     doLast {
         // Create package-info files for server package
         def serverPackagePath = "${openApiServerDir}/src/main/java/ro/kudostech/pingpatrol/api/server"
@@ -292,12 +322,12 @@ tasks.register('openapiPackageInfoConfig') {
 build.dependsOn(acceptanceTest)
 compileJava.dependsOn buildJavaServer
 buildJavaServer.finalizedBy openapiPackageInfoConfig
-
 compileAcceptanceJava.dependsOn buildJavaClient
 acceptanceTest.mustRunAfter(test)
 acceptanceTest.finalizedBy jacocoAcceptanceTestReport
-
 test.finalizedBy jacocoTestReport
+build.finalizedBy allTestReport
+
 
 
 
