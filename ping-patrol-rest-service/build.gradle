@@ -247,7 +247,7 @@ tasks.register('buildJavaServer', GenerateTask) {
             dateLibrary            : "java8",
             delegatePattern        : "false",
             hideGenerationTimestamp: "true",
-//            library                : "spring-boot",
+            library                : "spring-boot",
             openApiNullable        : "false",
             skipDefaultInterface   : "true",
             useTags                : "true",
