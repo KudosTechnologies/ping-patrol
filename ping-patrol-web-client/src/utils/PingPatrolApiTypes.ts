@@ -32,17 +32,3 @@ export enum MonitorRunStatus {
     REACHABLE = "REACHABLE",
     UNREACHABLE = "UNREACHABLE",
 }
-
-export type MonitorRun = {
-    id: number;
-    monitorId: string;
-    status: MonitorRunStatus;
-    duration: number;
-    startedAt: string;
-    errorDetails: string;
-};
-
-export enum MonitorRunStatus {
-    REACHABLE = "REACHABLE",
-    UNREACHABLE = "UNREACHABLE",
-}

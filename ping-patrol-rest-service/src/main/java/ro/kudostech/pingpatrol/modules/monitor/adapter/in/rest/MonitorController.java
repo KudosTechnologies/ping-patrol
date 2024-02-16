@@ -3,12 +3,15 @@ package ro.kudostech.pingpatrol.modules.monitor.adapter.in.rest;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import ro.kudostech.pingpatrol.api.server.MonitorsApi;
 import ro.kudostech.pingpatrol.api.server.model.CreateMonitorRequest;
 import ro.kudostech.pingpatrol.api.server.model.Monitor;
+import ro.kudostech.pingpatrol.api.server.model.MonitorPatchOperation;
 import ro.kudostech.pingpatrol.api.server.model.MonitorRun;
 import ro.kudostech.pingpatrol.api.server.model.UpdateMonitorRequest;
 import ro.kudostech.pingpatrol.modules.monitor.ports.MonitorService;
@@ -22,9 +25,10 @@ public class MonitorController implements MonitorsApi {
   @Override
   public ResponseEntity<Monitor> createMonitor(CreateMonitorRequest createMonitorRequest) {
 
-    Monitor monitor = monitorService.createMonitor(createMonitorRequest);
-    URI location = URI.create("/monitors/" + monitor.getId());
-    return ResponseEntity.created(location).body(monitor);
+    return null;
+//    Monitor monitor = monitorService.createMonitor(createMonitorRequest);
+//    URI location = URI.create("/monitors/" + monitor.getId());
+//    return ResponseEntity.created(location).body(monitor);
   }
 
   @Override
@@ -52,6 +56,13 @@ public class MonitorController implements MonitorsApi {
   @Override
   public ResponseEntity<Monitor> getMonitorById(UUID monitorId) {
     return ResponseEntity.ok(monitorService.getMonitorById(monitorId.toString()));
+  }
+
+  @Override
+  public ResponseEntity<Monitor> patchMonitorById(
+      UUID monitorId, List<MonitorPatchOperation> monitorPatchOperation) {
+    var monitor = monitorService.patchMonitorById(monitorId.toString(), monitorPatchOperation);
+    return ResponseEntity.ok(monitor);
   }
 
   @Override

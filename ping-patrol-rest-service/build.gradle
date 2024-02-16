@@ -15,7 +15,6 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.4'
     id 'java'
     id 'jacoco'
-    id 'com.palantir.docker-compose' version '0.35.0'
 }
 dependencyManagement {
     imports {
@@ -54,8 +53,9 @@ jar {
     enabled = false
 }
 
-def openApiClientDir = "$buildDir/generated/openapi/client".toString()
-def openApiServerDir = "$buildDir/generated/openapi/server".toString()
+def openApiClientDir = layout.buildDirectory.dir('generated/openapi/client').get().getAsFile().toString()
+def openApiServerDir = layout.buildDirectory.dir('generated/openapi/server').get().getAsFile().toString()
+
 sourceSets {
     main {
         java.srcDir "src/main/java"
@@ -67,6 +67,7 @@ sourceSets {
         resources.srcDir "src/test/resources"
     }
     acceptance {
+        println "OpenAPI Client Directory: ${openApiClientDir}"
         java.srcDir 'src/acceptance/java'
         java.srcDir "${openApiClientDir}/src/java"
         compileClasspath += sourceSets.main.output + configurations.testCompileClasspath + configurations.compileClasspath
@@ -75,7 +76,7 @@ sourceSets {
 }
 
 dependencies {
-    apiDef "ro.kudostech:ping-patrol-rest-service-api:$pingPatrolRestApiVersion@yaml"
+    // Spring
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -83,8 +84,10 @@ dependencies {
     implementation 'org.springframework.modulith:spring-modulith-starter-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
-    implementation group: 'org.keycloak', name: 'keycloak-admin-client', version: '23.0.6'
     runtimeOnly 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // Others
+    implementation group: 'org.keycloak', name: 'keycloak-admin-client', version: '23.0.6'
 
     implementation group: 'io.swagger.core.v3', name: 'swagger-annotations', version: '2.2.20'
     implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.3.0'
@@ -192,16 +195,7 @@ tasks.register('allTestReport', JacocoReport) {
         html.required = true
     }
 }
-tasks.register('copyOpenApiDef', Copy) {
-    dependsOn configurations.apiDef
-    delete "spec/external/"
-    from configurations.apiDef.singleFile.absolutePath
 
-    include "**/*.yaml", "**/*.yml"
-    rename("ping-patrol-rest-service-api-" + project.property("pingPatrolRestApiVersion") + ".yaml", "ping-patrol-rest-service-api.yaml")
-    includeEmptyDirs = false
-    into "$projectDir/spec/external/"
-}
 tasks.register('buildJavaClient', GenerateTask) {
     group 'openapi tools'
     generatorName = "java"
@@ -216,15 +210,14 @@ tasks.register('buildJavaClient', GenerateTask) {
             "java.time.OffsetDateTime": "java.time.Instant"
     ]
     configOptions = [
-            artifactDescription    : "generated organizationApi",
-            artifactId             : "organizationApi",
-            artifactUrl            : "https://bitbucket.interhyp.de/bitbucket/projects/BACKEND/repos/organization-api/",
+            artifactDescription    : "generated pingPatrolApi",
+            artifactId             : "pingPatrolApi",
             hideGenerationTimestamp: "true",
             library                : "resttemplate",
             openApiNullable        : "false",
             serializableModel      : "true",
             sourceFolder           : "src/java",
-            useBeanValidation      : "true",
+            generatePom            : "false"
     ]
 }
 
@@ -232,6 +225,7 @@ tasks.register('buildJavaClient', GenerateTask) {
 tasks.register('buildJavaServer', GenerateTask) {
     group 'openapi tools'
     generatorName = "spring"
+    library = "spring-boot"
     inputSpec = "$projectDir/spec/external/ping-patrol-rest-service-api.yaml".toString()
     outputDir = openApiServerDir
     apiPackage = 'ro.kudostech.pingpatrol.api.server'
@@ -245,34 +239,23 @@ tasks.register('buildJavaServer', GenerateTask) {
 
     // Check docs for all options: https://openapi-generator.tech/docs/generators/spring/
     configOptions = [
-            dateLibrary                   : "java8",
-            delegatePattern               : "false",
-            enumPropertyNaming            : "UPPERCASE",
-            exceptionHandler              : "false",
-            generateBuilders              : "false",
-            gradleBuildFile               : "false",
-            hideGenerationTimestamp       : "true",
-            interfaceOnly                 : "true",
-            interfacePrefix               : "false",
-//            library                       : "spring-cloud",
-            library                       : "spring-boot",
-            openApiNullable               : "false",
-            removeEnumValuePrefix         : "false",
-            removeOperationIdPrefix       : "true",
-            skipDefaultInterface          : "true",
-            useSpringBoot3                : "true",
-            useBeanValidation             : "true",
-            performBeanValidation         : "true",
-            useTags                       : "true",
-            // @lombok.Generated makes jacoco ignore the generated classes. The @Generated annotation added by openapi does not have the correct retention
-            // period for this. See also https://www.baeldung.com/jacoco-report-exclude
-            additionalModelTypeAnnotations: "@lombok.Generated",
-            additionalEnumTypeAnnotations : "@lombok.Generated",
+            interfaceOnly          : "true",
+            useBeanValidation      : "true",
+            performBeanValidation  : "true",
+            serializableModel      : "true",
+            useSpringBoot3         : "true",
+            dateLibrary            : "java8",
+            delegatePattern        : "false",
+            hideGenerationTimestamp: "true",
+            library                : "spring-boot",
+            openApiNullable        : "false",
+            skipDefaultInterface   : "true",
+            useTags                : "true",
     ]
 
 }
 
-//tasks.register('openapiPackageInfoConfig') {
+
 tasks.register('openapiPackageInfoConfig') {
     dependsOn 'buildJavaServer'
     doLast {
@@ -302,20 +285,11 @@ tasks.register('openapiPackageInfoConfig') {
     }
 }
 
-dockerCompose {
-    dockerComposeFile "/${projectDir}/src/main/resources/scripts/local-setup/docker-compose.yml"
-}
-
-bootRun {
-    jvmArgs = ["-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"]
-}
 
 build.dependsOn(acceptanceTest)
 compileJava.dependsOn buildJavaServer
-buildJavaServer.dependsOn copyOpenApiDef
 buildJavaServer.finalizedBy openapiPackageInfoConfig
 
-buildJavaClient.dependsOn copyOpenApiDef
 compileAcceptanceJava.dependsOn buildJavaClient
 acceptanceTest.mustRunAfter(test)
 acceptanceTest.finalizedBy jacocoAcceptanceTestReport
