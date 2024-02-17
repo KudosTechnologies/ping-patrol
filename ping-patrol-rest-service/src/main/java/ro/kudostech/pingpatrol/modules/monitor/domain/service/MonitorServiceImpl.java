@@ -166,7 +166,7 @@ public class MonitorServiceImpl implements MonitorService {
           "Could not validate patches for user {}.\nFound the following violations: {}",
           monitorDbo,
           violations);
-      throw new ConstraintViolationException("violations", violations);
+      throw new ConstraintViolationException("Constraint Violation Exception", violations);
     } else {
       log.debug("Successfully validated patches for user {}.", monitorDbo);
     }

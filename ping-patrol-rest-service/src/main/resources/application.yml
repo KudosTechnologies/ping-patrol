@@ -42,6 +42,6 @@ keycloak:
 user-reference-token:
   lifespan-in-minutes: 10080
 
-logging:
-  config: classpath:logback-spring.xml
+#logging:
+#  config: classpath:logback-spring.xml
 

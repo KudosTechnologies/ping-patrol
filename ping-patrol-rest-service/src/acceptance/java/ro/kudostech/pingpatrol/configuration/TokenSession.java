@@ -1,4 +1,4 @@
-package ro.kudostech.pingpatrol.step;
+package ro.kudostech.pingpatrol.configuration;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
