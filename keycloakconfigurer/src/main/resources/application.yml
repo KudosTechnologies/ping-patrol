@@ -1,0 +1,4 @@
+keycloak:
+  base-url: ${KEYCLOAK_BASE_URL:http://localhost:9080}
+  admin-user: ${KEYCLOAK_ADMIN_USERNAME:admin}
+  admin-password: ${KEYCLOAK_ADMIN_PASSWORD:admin}

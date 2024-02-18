@@ -23,7 +23,9 @@ public class MonitorRunnerInitializer {
     monitorRepository.findAll().stream()
         .filter(monitorDbo -> monitorDbo.getStatus().equals(MonitorStatus.RUNNING.name()))
         .forEach(
-            monitorDbo ->
-                monitorRunnerScheduler.scheduleMonitorRunner(monitorMapper.toMonitor(monitorDbo)));
+            monitorDbo -> {
+              log.info("Scheduling monitor {}", monitorDbo.getName());
+              monitorRunnerScheduler.scheduleMonitorRunner(monitorMapper.toMonitor(monitorDbo));
+            });
   }
 }

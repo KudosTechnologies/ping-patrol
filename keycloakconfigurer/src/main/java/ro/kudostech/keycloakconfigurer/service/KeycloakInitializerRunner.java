@@ -1,4 +1,4 @@
-package ro.kudostech.pingpatrol.modules.keycloakconfigurator;
+package ro.kudostech.keycloakconfigurer.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,18 +18,22 @@ import org.keycloak.representations.idm.RealmRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 @Slf4j
+@Component
 @RequiredArgsConstructor
-//@Component
-@Profile("!acceptancetest")
 public class KeycloakInitializerRunner implements CommandLineRunner {
 
   @Value("${keycloak.base-url}")
   public String keycloakBaseUrl;
+
+  @Value("${GOOGLE_CLIENT_ID}")
+  public String googleClientId;
+
+  @Value("${GOOGLE_CLIENT_SECRET}")
+  public String googleClientSecret;
 
   private static final String REALM_NAME = "pingpatrol";
   private static final String CLIENT_ID = "pingpatrol-webapp";
@@ -43,15 +47,9 @@ public class KeycloakInitializerRunner implements CommandLineRunner {
           "https://pingpatrol.dev.kudostech.ro/*");
   private static final String USER_ID_CLAIM = "user_id";
   private static final List<UserPass> USER_LIST =
-      Arrays.asList(
-          new UserPass("admin@test.com", "admin"),
-          new UserPass("user@test.com", "user"));
+      Arrays.asList(new UserPass("admin@test.com", "admin"), new UserPass("user@test.com", "user"));
   private static final String ROLE_USER = "user";
   private static final String ROLE_ADMIN = "admin";
-
-  private static final String GOOGLE_CLIENT_ID =
-      "993742822148-poffanspmvrb5kcsfbkfnrde3rreij25.apps.googleusercontent.com";
-  private static final String GOOGLE_CLIENT_SECRET = "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";
 
   record UserPass(String id, String password, String email) {
     public UserPass(String email, String password) {
@@ -64,6 +62,8 @@ public class KeycloakInitializerRunner implements CommandLineRunner {
   @Override
   public void run(String... args) {
     log.info("Initializing '{}' realm in Keycloak ...", REALM_NAME);
+    log.info("GOOGLE_CLIENT_ID: {}", googleClientId);
+    log.info("GOOGLE_CLIENT_SECRET: {}", googleClientSecret);
 
     cleanUpRealm();
 
@@ -126,8 +126,8 @@ public class KeycloakInitializerRunner implements CommandLineRunner {
     googleIdentityProvider.setFirstBrokerLoginFlowAlias("first broker login");
 
     Map<String, String> googleConfig = new HashMap<>();
-    googleConfig.put("clientId", GOOGLE_CLIENT_ID);
-    googleConfig.put("clientSecret", GOOGLE_CLIENT_SECRET);
+    googleConfig.put("clientId", googleClientId);
+    googleConfig.put("clientSecret", googleClientSecret);
     googleIdentityProvider.setConfig(googleConfig);
     realmRepresentation.addIdentityProvider(googleIdentityProvider);
   }
@@ -211,7 +211,7 @@ public class KeycloakInitializerRunner implements CommandLineRunner {
     UserPass admin = USER_LIST.get(0);
     log.info("Testing getting token for '{}' ...", admin.email());
 
-    Keycloak pingpatrolwebapp =
+    Keycloak pingPatrolWebApp =
         KeycloakBuilder.builder()
             .serverUrl(keycloakBaseUrl)
             .realm(REALM_NAME)
@@ -221,7 +221,7 @@ public class KeycloakInitializerRunner implements CommandLineRunner {
             .build();
 
     log.info(
-        "'{}' token: {}", admin.email(), pingpatrolwebapp.tokenManager().grantToken().getToken());
+        "'{}' token: {}", admin.email(), pingPatrolWebApp.tokenManager().grantToken().getToken());
     log.info("'{}' initialization completed successfully!", REALM_NAME);
   }
 }
