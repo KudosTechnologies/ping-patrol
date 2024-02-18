@@ -1,4 +1,4 @@
-package ro.kudostech.pingpatrol.modules.keycloakconfigurator;
+package ro.kudostech.keycloakconfigurer.service;
 
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
@@ -7,8 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-//@Configuration
-@Profile("!acceptancetest")
+@Configuration
 public class KeycloakAdminConfig {
 
   @Value("${keycloak.base-url}")

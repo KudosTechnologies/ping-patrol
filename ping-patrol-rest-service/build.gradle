@@ -87,8 +87,6 @@ dependencies {
     runtimeOnly 'org.springframework.boot:spring-boot-starter-actuator'
 
     // Others
-    implementation group: 'org.keycloak', name: 'keycloak-admin-client', version: '23.0.6'
-
     implementation group: 'io.swagger.core.v3', name: 'swagger-annotations', version: '2.2.20'
     implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.3.0'
     compileOnly 'org.projectlombok:lombok'
