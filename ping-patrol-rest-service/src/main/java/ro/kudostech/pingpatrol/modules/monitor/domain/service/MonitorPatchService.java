@@ -18,7 +18,9 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import static java.util.Map.entry;
+import static ro.kudostech.pingpatrol.api.server.model.MonitorPatchOperation.PathEnum.NAME;
 import static ro.kudostech.pingpatrol.api.server.model.MonitorPatchOperation.PathEnum.TYPE;
+import static ro.kudostech.pingpatrol.api.server.model.MonitorPatchOperation.PathEnum.URL;
 
 @Slf4j
 @Service
@@ -30,9 +32,8 @@ public class MonitorPatchService {
               PatchOperation.REPLACE,
               Map.ofEntries(
                   entry(TYPE, this::setType),
-                  entry(
-                      MonitorPatchOperation.PathEnum.NAME,
-                      (MonitorDbo m, Object o) -> m.setName(o.toString()))));
+                  entry(NAME, (MonitorDbo m, Object o) -> m.setName(o.toString())),
+                  entry(URL, (MonitorDbo m, Object o) -> m.setUrl(o.toString()))));
 
   public Set<ConstraintViolation<?>> patch(
       MonitorDbo monitorDbo, List<MonitorPatchOperation> patchOperations) {
@@ -51,8 +52,8 @@ public class MonitorPatchService {
     if (action == null) {
       String message =
           String.format(
-              "%sing the %s is not possible.",
-              patchOperation.getOp().getValue(), patchOperation.getPath().getValue());
+              "%s-ing the %s is not possible.",
+              patchOperation.getOp().getValue().toUpperCase(), patchOperation.getPath().getValue());
       log.info(message);
       return Optional.of(
           ConstraintViolationHelper.buildConstraintViolation(
@@ -61,9 +62,11 @@ public class MonitorPatchService {
     try {
       action.accept(monitorDbo, patchOperation.getValue());
     } catch (IllegalPatchArgumentException e) {
+      String target = e.getTarget().toString();
       return Optional.of(
           ConstraintViolationHelper.buildConstraintViolation(
-              "must be a valid " + e.getTarget(),
+              String.format(
+                  "must be a valid %s.", target.split("\\.")[target.split("\\.").length - 1]),
               e.getTarget(),
               patchOperation.getPath().getValue().toString()));
     }
@@ -72,7 +75,11 @@ public class MonitorPatchService {
   }
 
   private void setType(MonitorDbo monitorDbo, Object o) {
-    var monitorType = MonitorType.fromValue(o.toString());
-    monitorDbo.setType(monitorType.name());
+    try {
+      var monitorType = MonitorType.fromValue(o.toString());
+      monitorDbo.setType(monitorType.name());
+    } catch (IllegalArgumentException e) {
+      throw new IllegalPatchArgumentException(MonitorType.class);
+    }
   }
 }

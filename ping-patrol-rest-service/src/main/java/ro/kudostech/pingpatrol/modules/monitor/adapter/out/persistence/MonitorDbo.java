@@ -8,13 +8,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.net.URI;
 
 @Entity
 @Table(name = "monitor")
@@ -37,7 +36,11 @@ public class MonitorDbo {
 
   @NotNull private String type;
   @NotNull private String status;
-  @NotNull private String url;
+
+  @NotNull
+  @Pattern(regexp = "^((https?|ftp|smtp)://)?(www.)?[a-z0-9]+\\.[a-z]+(/[a-zA-Z0-9#]+/?)*$")
+  private String url;
+
   @NotNull private Integer monitoringInterval;
   @NotNull private Integer monitorTimeout;
 }

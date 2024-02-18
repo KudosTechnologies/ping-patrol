@@ -14,7 +14,7 @@ import ro.kudostech.pingpatrol.api.server.model.Violation;
 public class Rfc7807ProblemBuilder {
   public static ResponseEntity<RFC7807Problem> buildErrorResponse(
       String detail, HttpStatus httpStatus, WebRequest request, List<Violation> violations) {
-    RFC7807Problem problem = new RFC7807Problem();
+    RFC7807Problem problem = RFC7807Problem.builder().build();
     problem.setStatus(httpStatus.value());
     problem.setTitle(httpStatus.name());
     problem.setDetail(detail);

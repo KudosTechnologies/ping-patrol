@@ -127,7 +127,7 @@ public class MonitorServiceImpl implements MonitorService {
     monitorDbo.setStatus(MonitorStatus.PAUSED.name());
     monitorRepository.save(monitorDbo);
     Monitor monitor = monitorMapper.toMonitor(monitorDbo);
-    monitorRunnerScheduler.pauseMonitorRunner(monitor.getId().toString());
+    monitorRunnerScheduler.pauseMonitorRunner(monitorId);
     return monitor;
   }
 

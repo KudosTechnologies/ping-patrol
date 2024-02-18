@@ -38,7 +38,7 @@ public class ConstraintViolationHelper {
 
   private Violation createViolation(ConstraintViolation<?> constraintViolation) {
     final String fieldName = constraintViolation.getPropertyPath().toString();
-    return new Violation().field(fieldName).message(constraintViolation.getMessage());
+    return Violation.builder().field(fieldName).message(constraintViolation.getMessage()).build();
   }
 
   private static Path pathFromString(final String nodeName) {
