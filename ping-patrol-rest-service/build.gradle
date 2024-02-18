@@ -273,18 +273,20 @@ tasks.register('buildJavaServer', GenerateTask) {
 
     // Check docs for all options: https://openapi-generator.tech/docs/generators/spring/
     configOptions = [
-            interfaceOnly          : "true",
-            useBeanValidation      : "true",
-            performBeanValidation  : "true",
-            serializableModel      : "true",
-            useSpringBoot3         : "true",
-            dateLibrary            : "java8",
-            delegatePattern        : "false",
-            hideGenerationTimestamp: "true",
-            library                : "spring-boot",
-            openApiNullable        : "false",
-            skipDefaultInterface   : "true",
-            useTags                : "true",
+            interfaceOnly                 : "true",
+            useBeanValidation             : "true",
+            performBeanValidation         : "true",
+            serializableModel             : "true",
+            useSpringBoot3                : "true",
+            dateLibrary                   : "java8",
+            delegatePattern               : "false",
+            hideGenerationTimestamp       : "true",
+            library                       : "spring-boot",
+            openApiNullable               : "false",
+            skipDefaultInterface          : "true",
+            useTags                       : "true",
+            additionalModelTypeAnnotations: "@lombok.Builder @lombok.AllArgsConstructor"
+
     ]
 
 }
