@@ -1,4 +1,4 @@
-package ro.kudostech.pingpatrol.step;
+package ro.kudostech.pingpatrol;
 
 import java.io.IOException;
 import org.springframework.http.HttpRequest;

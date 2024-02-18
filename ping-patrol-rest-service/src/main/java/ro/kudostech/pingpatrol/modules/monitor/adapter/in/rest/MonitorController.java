@@ -24,11 +24,9 @@ public class MonitorController implements MonitorsApi {
 
   @Override
   public ResponseEntity<Monitor> createMonitor(CreateMonitorRequest createMonitorRequest) {
-
-    return null;
-//    Monitor monitor = monitorService.createMonitor(createMonitorRequest);
-//    URI location = URI.create("/monitors/" + monitor.getId());
-//    return ResponseEntity.created(location).body(monitor);
+    Monitor monitor = monitorService.createMonitor(createMonitorRequest);
+    URI location = URI.create("/monitors/" + monitor.getId());
+    return ResponseEntity.created(location).body(monitor);
   }
 
   @Override

@@ -127,6 +127,8 @@ dependencies {
     acceptanceImplementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
     acceptanceImplementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.3.1'
     acceptanceImplementation group: 'org.bitbucket.b_c', name: 'jose4j', version: '0.9.5'
+    acceptanceCompileOnly 'org.projectlombok:lombok'
+    acceptanceAnnotationProcessor 'org.projectlombok:lombok'
 
     acceptanceImplementation group: 'com.github.tomakehurst', name: 'wiremock-jre8-standalone', version: '3.0.1'
 
@@ -149,12 +151,12 @@ test {
 tasks.withType(Test).configureEach {
     testLogging.showStandardStreams = true
 }
+
 tasks.register('acceptanceTest', Test) {
     description = "Runs the acceptance tests defined via Cucumber"
     group = "testing"
     testClassesDirs = sourceSets.acceptance.output.classesDirs
     classpath = sourceSets.acceptance.runtimeClasspath
-    finalizedBy "jacocoAcceptanceTestReport"
 }
 
 jacoco {
@@ -166,6 +168,8 @@ tasks.withType(JacocoReport).configureEach {
         html.required = true
     }
 }
+
+
 jacocoTestReport {
     description = "Generates jacoco code coverage report for unit test tasks."
     group = "reporting"
@@ -174,28 +178,58 @@ jacocoTestReport {
         xml.required = true
         html.required = true
     }
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: [
+                            '**/ro/kudostech/pingpatrol/api/client/**',
+                            '**/ro/kudostech/pingpatrol/api/server/**'
+                    ])
+        }))
+    }
 }
 tasks.register('jacocoAcceptanceTestReport', JacocoReport) {
     description = "Generates jacoco code coverage report for acceptance test tasks."
     group = "reporting"
     executionData acceptanceTest
     sourceSets sourceSets.main
+    classDirectories.setFrom(files(classDirectories.files.collect {
+        fileTree(dir: it, exclude: [
+                '**/ro/kudostech/pingpatrol/api/client/**',
+                '**/ro/kudostech/pingpatrol/api/server/**'
+        ])
+    }))
+
+
     reports {
         xml.required = true
         html.required = true
     }
 }
 tasks.register('allTestReport', JacocoReport) {
+    doFirst {
+        println "Generating all test report"
+    }
     description = "Generates jacoco code coverage report for unit, integration und acceptance test tasks."
     group = "reporting"
     executionData test, acceptanceTest
     sourceSets sourceSets.main
+
+    classDirectories.setFrom(files(classDirectories.files.collect {
+        fileTree(dir: it, exclude: [
+                '**/ro/kudostech/pingpatrol/api/client/**',
+                '**/ro/kudostech/pingpatrol/api/server/**'
+        ])
+    }))
+
     reports {
         xml.required = true
         html.required = true
     }
 }
 
+
+// https://openapi-generator.tech/docs/generators/java
 tasks.register('buildJavaClient', GenerateTask) {
     group 'openapi tools'
     generatorName = "java"
@@ -210,14 +244,15 @@ tasks.register('buildJavaClient', GenerateTask) {
             "java.time.OffsetDateTime": "java.time.Instant"
     ]
     configOptions = [
-            artifactDescription    : "generated pingPatrolApi",
-            artifactId             : "pingPatrolApi",
-            hideGenerationTimestamp: "true",
-            library                : "resttemplate",
-            openApiNullable        : "false",
-            serializableModel      : "true",
-            sourceFolder           : "src/java",
-            generatePom            : "false"
+            artifactDescription           : "generated pingPatrolApi",
+            artifactId                    : "pingPatrolApi",
+            hideGenerationTimestamp       : "true",
+            library                       : "resttemplate",
+            openApiNullable               : "false",
+            serializableModel             : "true",
+            sourceFolder                  : "src/java",
+            generatePom                   : "false",
+            additionalModelTypeAnnotations: "@lombok.Builder @lombok.AllArgsConstructor"
     ]
 }
 
@@ -225,7 +260,6 @@ tasks.register('buildJavaClient', GenerateTask) {
 tasks.register('buildJavaServer', GenerateTask) {
     group 'openapi tools'
     generatorName = "spring"
-    library = "spring-boot"
     inputSpec = "$projectDir/spec/external/ping-patrol-rest-service-api.yaml".toString()
     outputDir = openApiServerDir
     apiPackage = 'ro.kudostech.pingpatrol.api.server'
@@ -257,7 +291,6 @@ tasks.register('buildJavaServer', GenerateTask) {
 
 
 tasks.register('openapiPackageInfoConfig') {
-    dependsOn 'buildJavaServer'
     doLast {
         // Create package-info files for server package
         def serverPackagePath = "${openApiServerDir}/src/main/java/ro/kudostech/pingpatrol/api/server"
@@ -289,12 +322,12 @@ tasks.register('openapiPackageInfoConfig') {
 build.dependsOn(acceptanceTest)
 compileJava.dependsOn buildJavaServer
 buildJavaServer.finalizedBy openapiPackageInfoConfig
-
 compileAcceptanceJava.dependsOn buildJavaClient
 acceptanceTest.mustRunAfter(test)
 acceptanceTest.finalizedBy jacocoAcceptanceTestReport
-
 test.finalizedBy jacocoTestReport
+build.finalizedBy allTestReport
+
 
 
 
