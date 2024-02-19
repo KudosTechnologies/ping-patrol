@@ -1,9 +1,16 @@
-# ping-patrol
+# Ping Patrol
 
-## Description
-PingPatrol is a web-based uptime monitoring service, designed to offer basic functionalities similar to UptimeRobot. It aims to provide users with the capability to monitor the availability of their websites and receive notifications in case of downtime. The project's goal is to deepen knowledge in Java Spring Boot, ReactJS, and cloud technologies, while creating a functional and user-friendly service.
+## Project Overview
 
-## Functionalities:
+### Description
+
+PingPatrol is a web-based uptime monitoring service, designed to offer basic functionalities similar to UptimeRobot. It
+aims to provide users with the capability to monitor the availability of their websites and receive notifications in
+case of downtime. The project's goal is to deepen knowledge in Java Spring Boot, ReactJS, and cloud technologies, while
+creating a functional and user-friendly service.
+
+### Functionalities
+
 1. **Website Monitoring**: Regular checks of user-specified websites to determine availability.
 2. **Alerts**: Notification system to inform users of downtime incidents.
 3. **User Dashboard**: For adding and managing monitored websites.
@@ -11,7 +18,8 @@ PingPatrol is a web-based uptime monitoring service, designed to offer basic fun
 5. **Admin Panel**: For administrative functions and user management.
 6. **Reporting**: Basic reporting on website uptime and performance.
 
-## Technologies:
+### Technologies:
+
 1. **Backend**: Java Spring Boot (latest version).
 2. **Frontend**: ReactJS with Material UI or Tailwind for styling.
 3. **Identity Management**: Keycloak for Single Sign-On (SSO) and user management.
@@ -20,30 +28,20 @@ PingPatrol is a web-based uptime monitoring service, designed to offer basic fun
 6. **CI/CD**: GitHub Actions or Jenkins.
 7. **Cloud Services**: AWS/Azure for hosting and related cloud services.
 
-## Architecture:
+### Architecture:
+
 - **Backend**: Modular monolith using clean architecture principles to ensure maintainability and scalability.
 - **Frontend**: Simple, user-friendly UI, utilizing pre-built UI components from Material UI or Tailwind.
-- **Integration**: RESTful services for frontend-backend communication, Keycloak integration for authentication and authorization.
+- **Integration**: RESTful services for frontend-backend communication, Keycloak integration for authentication and
+  authorization.
 - **Testing**: Comprehensive testing strategy including unit, acceptance, and E2E tests.
 
 ## Local Setup
 
-### Build Project
-- Publish api specification in maven local repository
-```bash
-cd ping-patrol-service-api
-./gradlew publishToMavenLocal
-```
-
-- Build Service
-```bash
-cd ping-patrol-service
-./gradlew clean build 
-```
-
 ### Start External Services
 
 For now external services are consisted of:
+
 - Database
 - Keycloak
 
@@ -54,49 +52,100 @@ Navigate to `scripts/local-setup` directory and run:
 ./local-setup.sh restart keycloak --rebuild
 ```
 
-As you can observe we start `keycloak` with a `--rebuild` flag. This is because we have extended the default `jboss/keycloak` image with our own custom provider `ping-patrol-keycloak-custom-provider`.
+### Configure Keycloak
 
-Keycloak Admin Console:
-- link: http://127.0.0.1:9080
-- username: admin
-- password: admin
-
-Database Credentials:
-- database_name: pingpatrol_db
-- username: pingpatrol
-- port: 3306
-
-
-### Start Rest API Service
-
-- Start `ping-patrol-service` by running:
+- Build Service
 
 ```bash
-cd ping-patrol-service
+cd keycloakconfigurer
 ./gradlew bootRun
 ```
 
-Service will realms and authentication details like realms and clients in keycloak service:
-- clientId: pingpatrol-webapp
-- clientId: pingpatrol-client
-- roles: ["admin", "user"]
-- users:
-  - username: admin@test.com, password: admin
-  - username: user@test.com, password: user
+### Build n Start Ping Patrol Service
 
-Example request for obtaining a token from outside the Docker container:
+- Build Service
 
 ```bash
-curl --location 'http://localhost:9080/realms/pingpatrol/protocol/openid-connect/token' \
+cd ping-patrol-service
+./gradlew clean build 
+./gradlew bootRun
+```
+
+### Build n Start Ping-Patrol UI
+
+- Build Service
+
+```bash
+cd ping-patrol-web-client
+npm install
+npm run dev
+```
+
+## Application URLs
+
+| Application     | URL                                            | Credentials                                    |
+|-----------------|------------------------------------------------|------------------------------------------------|
+| ping-patrol-api | http://localhost:8080/v1/swagger-ui/index.html | [Access Token](#getting-access-token)          |
+| movie-ui        | http://localhost:3000                          | `admin@test.com/admin` or `user@test.com/user` |
+| Keycloak        | http://localhost:9080/admin                    | `admin/admin`                                  |
+
+## Demo
+
+- Ping Patrol Landing Page
+
+<img src="./documentation/images/ping-patrol-landing-page.png" alt="Ping Patrol Landing Page" width="640" height="312">
+
+- Login Page
+
+![Ping Patrol Login Page](./documentation/images/login-flow.gif)
+
+- Dashboard Overview
+
+![Ping Patrol Login Page](./documentation/images/dashboard-flow.gif)
+
+- Dashboard Monitors
+
+<img src="./documentation/images/monitor-dashboard.png" alt="Ping Patrol Landing Page" width="640" height="312">
+
+
+## Testing ping-patrol-api endpoints
+
+You can manage ping-patrol by accessing directly ping-patrol-rest-api endpoints using the Swagger website or curl.
+However, for the
+secured endpoints like POST `/v1/monitors`, `PUT /v1/monitors/{id}`, `PUT /v1/monitors/{id}/resume`, etc, you need to
+inform an
+access token issued by Keycloak.
+
+### Getting Access Token
+
+```bash
+ACCESS_TOKEN="$(curl --location 'http://localhost:9080/realms/pingpatrol/protocol/openid-connect/token' \
 --header 'Content-Type: application/x-www-form-urlencoded' \
 --data-urlencode 'grant_type=password' \
 --data-urlencode 'client_id=pingpatrol-webapp' \
 --data-urlencode 'username=admin@test.com' \
 --data-urlencode 'password=admin' \
---data-urlencode 'scope=openid'
+--data-urlencode 'scope=openid' | jq -r '.access_token')"
+
+echo $ACCESS_TOKEN
 ```
 
+### Call ping-patrol-api endpoints using curl
 
+- Create a monitor
+
+```bash
+curl --location 'http://localhost:8080/v1/monitors' \
+--header 'Content-Type: application/json' \
+--header "Authorization: Bearer $ACCESS_TOKEN" \
+--data '{
+  "name": "kudostech",
+  "type": "HTTPS",
+  "url": "https://kudostech.ro",
+  "monitoringInterval": 60,
+  "monitorTimeout": 100
+}'
+```
 
 
 

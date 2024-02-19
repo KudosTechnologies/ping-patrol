@@ -87,6 +87,7 @@ dependencies {
     runtimeOnly 'org.springframework.boot:spring-boot-starter-actuator'
 
     // Others
+    implementation group: 'jakarta.ws.rs', name: 'jakarta.ws.rs-api', version: '3.1.0'
     implementation group: 'io.swagger.core.v3', name: 'swagger-annotations', version: '2.2.20'
     implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.3.0'
     compileOnly 'org.projectlombok:lombok'

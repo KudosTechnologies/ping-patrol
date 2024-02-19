@@ -50,7 +50,7 @@ services:
       - "8080:8080"
       - "5005:5005"
 
-  kudconnect-web-client:
+  pingpatrol-web-client:
     image: kudconnect-web-client
     depends_on:
       keycloak:
