@@ -62,8 +62,6 @@ public class KeycloakInitializerRunner implements CommandLineRunner {
   @Override
   public void run(String... args) {
     log.info("Initializing '{}' realm in Keycloak ...", REALM_NAME);
-    log.info("GOOGLE_CLIENT_ID: {}", googleClientId);
-    log.info("GOOGLE_CLIENT_SECRET: {}", googleClientSecret);
 
     cleanUpRealm();
 
@@ -116,6 +114,11 @@ public class KeycloakInitializerRunner implements CommandLineRunner {
   }
 
   private void configureGoogleIdentityProvider(RealmRepresentation realmRepresentation) {
+    if (googleClientId == null || googleClientSecret == null) {
+      log.warn("Google ClientId and/or ClientSecret not set. Skipping Google Identity Provider");
+      return;
+    }
+
     IdentityProviderRepresentation googleIdentityProvider = new IdentityProviderRepresentation();
     googleIdentityProvider.setAlias("google");
     googleIdentityProvider.setDisplayName("Google");
