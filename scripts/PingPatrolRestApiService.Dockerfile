@@ -1,21 +1,19 @@
-FROM maven:3.9.6-eclipse-temurin-17-alpine AS maven_builder
+FROM eclipse-temurin:21 AS builder
 
-COPY kudconnect-service-api kudconnect-service-api
-COPY kudconnect-service kudconnect-service
-
-WORKDIR kudconnect-service-api
-RUN ./gradlew publishToMavenLocal
-
-WORKDIR ../kudconnect-service
+COPY ping-patrol-rest-service ping-patrol-rest-service
+WORKDIR ping-patrol-rest-service
 RUN ./gradlew clean build
+RUN mv build/libs/*.jar app.jar
+RUN java -Djarmode=layertools -jar app.jar extract
 
-FROM eclipse-temurin:21.0.2_13-jre-alpine
 
-COPY --from=maven_builder kudconnect-service/build/libs/*.jar kudconnect-service.jar
-ADD https://repo1.maven.org/maven2/co/elastic/apm/elastic-apm-agent/1.43.0/elastic-apm-agent-1.43.0.jar elastic-apm-agent.jar
-
-ENV APM_AGENT_OPTS="-javaagent:elastic-apm-agent.jar -Delastic.apm.service_name=kudconnect-service -Delastic.apm.server_url=http://10.50.8.11:8200 -Delastic.apm.environment=dev -Delastic.apm.application_packages=ro.kudostech -Delastic.apm.disable_bootstrap_checks=true"
+FROM eclipse-temurin:21-jre-jammy
+WORKDIR application
+COPY --from=builder ping-patrol-rest-service/dependencies/ ./
+COPY --from=builder ping-patrol-rest-service/spring-boot-loader/ ./
+COPY --from=builder ping-patrol-rest-service/snapshot-dependencies/ ./
+COPY --from=builder ping-patrol-rest-service/application/ ./
 
 EXPOSE 8080
 
-ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS} ${APM_AGENT_OPTS} -jar /kudconnect-service.jar --spring.profiles.active=${ACTIVE_PROFILE}"]
+ENTRYPOINT ["java" , "org.springframework.boot.loader.launch.JarLauncher"]
