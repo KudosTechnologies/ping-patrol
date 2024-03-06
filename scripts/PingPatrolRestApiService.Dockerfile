@@ -7,7 +7,7 @@ RUN mv build/libs/*.jar app.jar
 RUN java -Djarmode=layertools -jar app.jar extract
 
 
-FROM eclipse-temurin:21-jre-jammy
+FROM eclipse-temurin:21.0.2_13-jre-jammy
 WORKDIR application
 COPY --from=builder ping-patrol-rest-service/dependencies/ ./
 COPY --from=builder ping-patrol-rest-service/spring-boot-loader/ ./
