@@ -1,4 +1,4 @@
-FROM node:20.11-slim as react_builder
+FROM node:20.12-slim as react_builder
 
 COPY kudconnect-web-client kudconnect-web-client
 WORKDIR kudconnect-web-client
