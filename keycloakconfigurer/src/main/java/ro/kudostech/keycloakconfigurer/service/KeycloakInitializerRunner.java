@@ -10,11 +10,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
+import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.IdentityProviderRepresentation;
 import org.keycloak.representations.idm.ProtocolMapperRepresentation;
 import org.keycloak.representations.idm.RealmRepresentation;
+import org.keycloak.representations.idm.RequiredActionProviderRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -89,8 +91,17 @@ public class KeycloakInitializerRunner implements CommandLineRunner {
     // Create Realm
     keycloakAdmin.realms().create(realmRepresentation);
 
+    disableVerifyProfileAction();
+
     // Testing
     testConfiguration();
+  }
+
+  private void disableVerifyProfileAction() {
+    RealmResource realmResource = keycloakAdmin.realm(REALM_NAME);
+    RequiredActionProviderRepresentation verifyProfileAction = realmResource.flows().getRequiredAction("VERIFY_PROFILE");
+    verifyProfileAction.setEnabled(false);
+    realmResource.flows().updateRequiredAction("VERIFY_PROFILE", verifyProfileAction);
   }
 
   private Map<String, List<String>> getClientRoles(UserPass userPass) {

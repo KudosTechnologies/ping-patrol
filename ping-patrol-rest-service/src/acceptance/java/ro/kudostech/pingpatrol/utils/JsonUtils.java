@@ -11,7 +11,11 @@ public class JsonUtils {
   private final ObjectMapper objectMapper = new ObjectMapper();
 
   public RFC7807Problem parseProblem(String json) throws JsonProcessingException {
+    return parseJson(json, RFC7807Problem.class);
+  }
+
+  public <T> T parseJson(String json, Class<T> type) throws JsonProcessingException {
     objectMapper.findAndRegisterModules();
-    return objectMapper.readValue(json, RFC7807Problem.class);
+    return objectMapper.readValue(json, type);
   }
 }
