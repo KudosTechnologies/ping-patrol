@@ -6,20 +6,20 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.jsonschema2pojo:jsonschema2pojo-gradle-plugin:1.2.1'
+        classpath 'org.jsonschema2pojo:jsonschema2pojo-gradle-plugin:1.2.2'
         classpath "org.openapitools:openapi-generator-gradle-plugin:$openApiGeneratorVersion"
     }
 }
 plugins {
-    id 'org.springframework.boot' version '3.2.4'
-    id 'io.spring.dependency-management' version '1.1.4'
+    id 'org.springframework.boot' version '3.3.5'
+    id 'io.spring.dependency-management' version '1.1.6'
     id 'java'
     id 'jacoco'
 }
 dependencyManagement {
     imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2023.0.1"
-        mavenBom "org.springframework.modulith:spring-modulith-bom:1.1.3"
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2023.0.3"
+        mavenBom "org.springframework.modulith:spring-modulith-bom:1.2.4"
 
     }
 }
@@ -88,43 +88,43 @@ dependencies {
 
     // Others
     implementation group: 'jakarta.ws.rs', name: 'jakarta.ws.rs-api', version: '3.1.0'
-    implementation group: 'io.swagger.core.v3', name: 'swagger-annotations', version: '2.2.21'
-    implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.5.0'
+    implementation group: 'io.swagger.core.v3', name: 'swagger-annotations', version: '2.2.25'
+    implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.6.0'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-    implementation group: 'org.mapstruct', name: 'mapstruct', version: '1.5.5.Final'
-    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
-    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.14.0'
+    implementation group: 'org.mapstruct', name: 'mapstruct', version: '1.6.2'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.2'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.17.0'
     implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '7.4'
 
 
-    runtimeOnly group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '3.3.3'
+    runtimeOnly group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '3.5.0'
 
     // Test
     testImplementation 'org.springframework.modulith:spring-modulith-starter-test'
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
-    testImplementation(platform("org.junit:junit-bom:5.10.2"))
+    testImplementation(platform("org.junit:junit-bom:5.11.3"))
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
     testImplementation('org.springframework.boot:spring-boot-starter-test')
-    testImplementation 'com.h2database:h2:2.2.224'
+    testImplementation 'com.h2database:h2:2.3.232'
 
 
     // Acceptance tests
     acceptanceImplementation('org.springframework.boot:spring-boot-starter-test')
-    acceptanceImplementation 'com.h2database:h2:2.2.224'
+    acceptanceImplementation 'com.h2database:h2:2.3.232'
     acceptanceImplementation 'io.rest-assured:rest-assured'
-    acceptanceImplementation 'io.cucumber:cucumber-java:7.16.1'
-    acceptanceImplementation 'io.cucumber:cucumber-junit:7.16.1'
-    acceptanceImplementation 'io.cucumber:cucumber-spring:7.16.1'
-    acceptanceImplementation 'org.awaitility:awaitility:4.2.1'
+    acceptanceImplementation 'io.cucumber:cucumber-java:7.20.1'
+    acceptanceImplementation 'io.cucumber:cucumber-junit:7.20.1'
+    acceptanceImplementation 'io.cucumber:cucumber-spring:7.20.1'
+    acceptanceImplementation 'org.awaitility:awaitility:4.2.2'
     acceptanceImplementation 'com.auth0:java-jwt:4.4.0'
     acceptanceImplementation group: 'javax.annotation', name: 'javax.annotation-api', version: '1.3.2'
     acceptanceImplementation 'javax.validation:validation-api:2.0.1.Final'
     acceptanceImplementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
-    acceptanceImplementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.3.1'
+    acceptanceImplementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.4'
     acceptanceImplementation group: 'org.bitbucket.b_c', name: 'jose4j', version: '0.9.6'
     acceptanceCompileOnly 'org.projectlombok:lombok'
     acceptanceAnnotationProcessor 'org.projectlombok:lombok'
